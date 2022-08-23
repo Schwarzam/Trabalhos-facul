@@ -1,6 +1,6 @@
 // 2. Escreva um programa que leia 3 notas de um aluno e a média das notas dos exercícios realizados por ele. Calcular a média de aproveitamento, usando a fórmula: MA = (N1 + N2*2 + N3*3 + ME)/7. A partir da média, informar o conceito de acordo com a tabela:
 
-
+// Execução em g++ clang version 13.1.6
 #include <iostream>
 
 int main()
@@ -37,7 +37,7 @@ int main()
 
 }
 
-// Execucao 
+// Execução em g++ clang version 13.1.6
 
 // (base) gustavo@gustavoPC Lab_01b % ./a.out  
 // Digite a primeira nota: 5

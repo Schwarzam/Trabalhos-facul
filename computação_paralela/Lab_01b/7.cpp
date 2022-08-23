@@ -1,0 +1,1 @@
+// Execução em g++ clang version 13.1.6

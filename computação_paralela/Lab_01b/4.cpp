@@ -1,4 +1,5 @@
 
+// Execução em g++ clang version 13.1.6
 #include <string.h>
 #include <iostream>
 
@@ -26,7 +27,7 @@ void ordem(char a[100], char b[100]){
     }
 }
 
-// Execucao 
+// Execução em g++ clang version 13.1.6
 
 // Informe o primeiro nome: 
 // gustavo

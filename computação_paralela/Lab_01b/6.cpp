@@ -1,3 +1,4 @@
+// Execução em g++ clang version 13.1.6
 #include <iostream>
 
 int main() {
@@ -34,7 +35,7 @@ int main() {
     return 0;
 }
 
-// Execucao
+// Execução em g++ clang version 13.1.6
 
 // Digite os valores para a 1 linha
 // 2

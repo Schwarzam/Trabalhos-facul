@@ -1,4 +1,6 @@
 // 3. Faça o programa que apresenta a seguinte saída, perguntando ao usuário o número máximo (no exemplo, 9). Este número deve ser sempre ímpar.
+
+// Execução em g++ clang version 13.1.6
 #include <iostream>
 
 int main(void) {
@@ -29,7 +31,7 @@ int main(void) {
     return 0;
 }
 
-// Execucao
+// Execução em g++ clang version 13.1.6
 
 // Atencao, o numero deve ser impar.
 // 7
