@@ -73,6 +73,11 @@ int main() {
 //Apple clang version 13.1.6 (clang-1316.0.21.2.5)
 //Target: arm64-apple-darwin21.3.0
 
+// Tempo da versáo serial
+//time ./a.out
+// The factorial of 10 is 3628800
+// ./a.out  0.00s user 0.00s system 2% cpu 0.207s total
+
 // Usando 10 processos
 //time ./a.out
 // The factorial of 10 is 3628800
@@ -81,22 +86,22 @@ int main() {
 // Usando 8 processos
 //time ./a.out
 //The factorial of 10 is 3628800
-//./a.out  0.00s user 0.01s system 1% cpu 0.480 total
+//./a.out  0.00s user 0.01s system 1% cpu 0.480s total
 
 // Usando 5 processos
 //time ./a.out
 //The factorial of 10 is 3628800
-//./a.out  0.00s user 0.00s system 3% cpu 0.165 total
+//./a.out  0.00s user 0.00s system 3% cpu 0.165s total
 
 // Usando 2 processos
 //time ./a.out
 //The factorial of 10 is 3628800
-//./a.out  0.00s user 0.00s system 1% cpu 0.246 total
+//./a.out  0.00s user 0.00s system 1% cpu 0.246s total
 
 // Usando 1 processo
 //time ./a.out
 //The factorial of 10 is 3628800
-//./a.out  0.00s user 0.00s system 2% cpu 0.186 total
+//./a.out  0.00s user 0.00s system 2% cpu 0.186s total
 
 //Acredito que "spawnar" um processo custe tempo, e para uma operacao tao simples nao valha a pena,
 //por isso quando mais processos mais custoso em questáo de tempo
