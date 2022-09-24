@@ -13,12 +13,45 @@ void resetCharArr(char *str){
     }
 }
 
-int main() {
+int convertePSegundos(int minutos, int segundos){
+    return (minutos * 60) + segundos;
+}
+
+int valida(int* s,int i){
+    for( int j=1; j < i; j++)
+        if(*(s + i)==*(s + j))
+            return 0;
+    return 1;
+}
+
+// imprime o vetor na tela
+void imprima(int* s, int n){
+    for( int i = 1; i <= n; i++)
+        printf("IMPRIMA %d ", *(s + i));
+    printf("\n");
+}
+
+void backtrack(int* tape, int* s, int n_tracks, int i){
+    if( i > n_tracks ) // caso base
+        imprima(s,n_tracks);
+    else{
+        for(int j=1; j <=n_tracks; j++){
+            *(s + i) = *(tape + j);
+            if(valida(s,i) == 1)
+                backtrack(tape, s,n_tracks,i+1);
+        }
+    }
+}
+
+
+
+
+int* read_txt(char* fname){
     FILE    *textfile;
     char    *text;
     long    numbytes;
 
-    textfile = fopen("/Users/gustavo/CLionProjects/tape/test.txt", "r");
+    textfile = fopen(fname, "r");
     if(textfile == NULL)
         return 1;
 
@@ -44,9 +77,12 @@ int main() {
     int trackNumber = 0, trackTotal = -1;
     int scanningTracks = 0;
 
-    for (int i = 0; i < numbytes; i++){
-        if (text[i] == ' ') {
+    int tapeIndex = 0;
+    int *tape, *res;
 
+    for (int i = 0; i <= numbytes; i++){
+
+        if (text[i] == ' ') {
             sscanf(char_number, "%d", &num);
             numbers[numbers_index] = num;
             resetCharArr(char_number);
@@ -54,16 +90,32 @@ int main() {
             numbers_index ++;
             char_number_index = 0;
         }
-        else if (text[i] == '\n') {
+
+        else if (text[i] == '\n' || i == numbytes) {
             sscanf(char_number, "%d", &num);
             numbers[numbers_index] = num;
 
-            if (trackTotal == trackNumber){
+            if (i == numbytes){ //Ultima iteracao
+                trackTotal = trackNumber;
+                *(tape + tapeIndex) = convertePSegundos(numbers[0], numbers[1]);
+                tapeIndex ++;
+                for (int j = 0; j <= trackTotal; j++){
+                    printf("tape track: %ds \n", *(tape + j));
+                }
+                backtrack(tape, res, trackTotal + 1, 0);
+
+            }else if(trackTotal == trackNumber){
                 infoNextLine = 1;
+
+                for (int j = 0; j < trackTotal; j++){
+                    printf("tape track: %ds \n", *(tape + j));
+                }
+                backtrack(tape, res, trackTotal, 0);
             }
 
             if (scanningTracks == 1 && !infoNextLine){
-                printf("Track: %d %d \n", numbers[0], numbers[1]);
+                *(tape + tapeIndex) = convertePSegundos(numbers[0], numbers[1]);
+                tapeIndex ++;
             }
 
             trackNumber++;
@@ -74,11 +126,15 @@ int main() {
             }
 
             else if (infoNextLine == 1){
-                printf("Total time of tape: %d, number of tracks: %d\n", numbers[0], numbers[1]);
+                printf("Total time of tape: %dm, number of tracks: %d\n", numbers[0], numbers[1]);
                 infoNextLine = 0;
                 trackNumber = 0;
                 trackTotal = numbers[1];
                 scanningTracks = 1;
+
+                tape = (int*)calloc(numbers[1], sizeof(int));
+                res = (int*)calloc(numbers[1], sizeof(int));
+                tapeIndex = 0;
             }
 
             resetCharArr(char_number);
@@ -93,6 +149,11 @@ int main() {
         }
 
     }
+}
+
+int main() {
+
+    read_txt("/Users/gustavo/CLionProjects/tape/test.txt");
 
     return 0;
 }
