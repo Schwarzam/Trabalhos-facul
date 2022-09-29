@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+//C:\Users\gusta\Documents\test.txt
+
 int seq = 0;
 
 void resetIntArr(int *arr){
@@ -102,7 +104,7 @@ void backtrack(int* tape, int* s, int n_tracks, int i, int tempoTotal){
 
 
 
-int* read_txt(char* fname){
+int read_txt(char* fname){
     FILE    *textfile;
     char    *text;
     long    numbytes;
@@ -130,9 +132,9 @@ int* read_txt(char* fname){
     int numbers[2] = {-1, -1};
 
     int char_number_index = 0;
-    char char_number[3]  = {'\0', '\0', '\0'};
+    char char_number[2]  = {'\0', '\0'};
 
-    int num;
+    int num; int num2;
     int infoNextLine = 0;
     int trackNumber = 0, trackTotal = -1;
     int scanningTracks = 0;
@@ -145,19 +147,16 @@ int* read_txt(char* fname){
     int num_fita = 1;
 
     for (int i = 0; i <= numbytes; i++){
-
         if (text[i] == ' ') {
             sscanf(char_number, "%d", &num);
             numbers[numbers_index] = num;
             resetCharArr(char_number);
-
             numbers_index ++;
             char_number_index = 0;
         }
-
-        else if (text[i] == '\n' || i == numbytes) {
-            sscanf(char_number, "%d", &num);
-            numbers[numbers_index] = num;
+        else if (text[i] == '\n' || i == numbytes || (char_number_index == 2)) {
+            sscanf(char_number, "%d", &num2);
+            numbers[numbers_index] = num2;
 
             if (i == numbytes){ //Ultima iteracao
                 trackTotal = trackNumber;
@@ -183,7 +182,7 @@ int* read_txt(char* fname){
                 backtrack(tape, res, trackTotal, 0, tempoTotal);
 
                 if (scanningTracks == 1 && seq == 0){
-                    printf("Nenhuma solucao encontrada! ");
+                    printf("Nenhuma solucao encontrada! \n");
                 }
             }
 
@@ -194,12 +193,15 @@ int* read_txt(char* fname){
 
             trackNumber++;
 
-            if (numbers[1] == -1){
+            if (numbers[1] == -1 && scanningTracks == 0){
                 printf("Numero de fitas: %d\n\n", numbers[0]);
                 infoNextLine = 1;
             }
 
             else if (infoNextLine == 1){
+                if (numbers[0] == -1 || numbers[1] == -1){
+                    break;
+                }
                 printf("FITA %d: \n", num_fita++);
                 printf("Tempo total: %dm, numero de musicas: %d\n", numbers[0], numbers[1]);
 
@@ -225,7 +227,6 @@ int* read_txt(char* fname){
             char_number[char_number_index] = text[i];
             char_number_index ++;
         }
-
     }
 }
 
