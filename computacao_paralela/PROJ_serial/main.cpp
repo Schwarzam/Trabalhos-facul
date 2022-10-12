@@ -28,13 +28,17 @@ int main() {
 //seja, possua a melhor aproximação para a série ln(T).
 
 //Execucao do programa em:
-//Apple clang version 13.1.6 (clang-1316.0.21.2.5)
-//Target: arm64-apple-darwin21.3.0
+//Distributor ID: Ubuntu
+//Description:    Ubuntu 22.04.1 LTS
+//Release:        22.04
+//Codename:       jammy
+
+//g++ (Ubuntu 11.2.0-19ubuntu1) 11.2.0
 
 //Comando: g++ -std=c++20 main.cpp
-
 //./a.out
-//Resposta: 1.71828
+// Valor de T: 20
+// Resposta: 1.718281834649447961660406747341767186299
 
 
 
