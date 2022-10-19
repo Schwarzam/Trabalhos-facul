@@ -13,6 +13,14 @@ T = 10000
 | Speedup | 1 | 1.67 |
 | Eficiencia | 1 | 0.835 |
 
+
+Valor de euler alcancado:
+2.71828182845904523536
+
+
+**Observações:**
+Existem problemas com a precisao. Toda operação da Série de Taylor ocorre de maneira correta, mas a precisção ao fazer a soma da iteração da Série de Taylor no resultado final ocorre algum problema que estou para descobrir.
+
 <br>
 
 #### Como instalar golang no ubuntu 22.04:
