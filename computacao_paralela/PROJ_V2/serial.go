@@ -23,7 +23,10 @@ func main() {
 	res := big.NewFloat(0)
 	res.SetPrec(100)
 
-	t := 100000
+	var t int
+	fmt.Printf("Insira o valor de T: ")
+	fmt.Scanf("%d", &t)
+
 	for i := 0; i < t; i++ {
 		f := new(big.Float).Quo(big.NewFloat(1), new(big.Float).SetInt(factorial(i)))
 
@@ -33,6 +36,10 @@ func main() {
 		res = res.Add(res, f)
 		// fmt.Println(res.Text('f', -1))
 	}
+
+	fmt.Printf("Resposta obtida: ")
 	fmt.Println(res.Text('f', -1))
-	fmt.Printf("2.718281828459045235360287471352662497757247093699 \n")
+
+	fmt.Printf("Resposta real: ")
+	fmt.Printf("2.718281828459045235360287471352662497757247093699 \n") //Valor real
 }
