@@ -2,25 +2,29 @@ package main
 
 import (
 	"fmt"
+	"math/big"
+	"sync"
 )
 
-func makeArray(min, max int) []int { //Cria um array de x até y
-	a := make([]int, max-min+1)
+func makeArray(tam int) []int { //Cria um array de 1 até tam
+	a := make([]int, tam-1+1)
 	for i := range a {
-		a[i] = min + i
+		a[i] = 1 + i
 	}
 	return a
 }
 
-func multip(s []int, c chan int) {
-	sum := 1
+func multip(wg *sync.WaitGroup, s []int, c chan big.Int) { //Multiplica todos elementos do vetor
+	defer wg.Done()
+
+	sum := big.NewInt(1)
 	for _, v := range s {
-		sum *= v
+		sum.Mul(sum, big.NewInt(int64(v)))
 	}
-	c <- sum // send sum to c
+	c <- *sum // adicionar soma ao channel
 }
 
-func dividirArray(slice []int, chunkSize int) [][]int {
+func dividirArray(slice []int, chunkSize int) [][]int { //Dividir array em X partes
 	var chunks [][]int
 	for {
 		if len(slice) == 0 {
@@ -38,14 +42,34 @@ func dividirArray(slice []int, chunkSize int) [][]int {
 	return chunks
 }
 
-func main() {
-	d := makeArray(1, 11)
-	arrays := dividirArray(d, 2)
+func factorial(wg *sync.WaitGroup, num int) *big.Int {
+	arr := makeArray(num)
+	arrays := dividirArray(arr, 1)
+	channel := make(chan big.Int)
 
-	fmt.Printf("%v \n", arrays)
-
-	for s := range d {
-		fmt.Println(s)
+	for chunk := range arrays {
+		wg.Add(1)
+		go multip(wg, arrays[chunk], channel)
 	}
 
+	go func() {
+		wg.Wait()
+		close(channel)
+	}()
+
+	res := big.NewInt(1)
+	for n := range channel {
+
+		fmt.Println(n)
+	}
+
+	return res
+}
+
+func main() {
+	var wg sync.WaitGroup
+
+	res := factorial(&wg, 10)
+
+	fmt.Printf("res %d \n", res)
 }
