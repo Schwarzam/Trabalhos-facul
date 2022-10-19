@@ -98,17 +98,16 @@ func main() {
 
 }
 
-//No meu PC:
+// Rodando no ubuntu 22.04 AWS
+// go version go1.19.2 linux/amd64
 
-// $ time go run serial.go
+// $time go run parallel.go
+
+// Rodando 2 CPUs com 2 threads
 // Insira o valor de T: 10000
 // Resposta obtida: 2.71828182845904523536628951163
 // Resposta real: 2.718281828459045235360287471352662497757247093699
-// go run serial.go  36.03s user 0.88s system 95% cpu 38.837 total
 
-// $ time go run parallel.go
-// Rodando em 8 CPUs, com 10 threads
-// Insira o valor de T: 10000
-// Resposta obtida: 2.71828182845904523536628951163
-// Resposta real: 2.718281828459045235360287471352662497757247093699
-// go run parallel.go  16.85s user 1.23s system 116% cpu 15.488 total
+// real    0m23.893s
+// user    0m27.889s
+// sys     0m0.842s
