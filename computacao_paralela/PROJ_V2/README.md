@@ -19,7 +19,7 @@ Valor de euler alcancado:
 
 
 **Observações:**
-Existem problemas com a precisao. Toda operação da Série de Taylor ocorre de maneira correta, mas a precisção ao fazer a soma da iteração da Série de Taylor no resultado final ocorre algum problema que estou para descobrir.
+Existem problemas com a precisao. Toda operação da Série de Taylor ocorre de maneira correta, mas a precisção ao fazer a soma da iteração da Série de Taylor no resultado final ocorre algum problema que estou para descobrir. Nao importa se o valor de T é 300 ou 3000000, o valor de euler correto obtido é o mesmo.
 
 <br>
 
