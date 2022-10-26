@@ -12,4 +12,4 @@
 
 ### print da execução:
 
-[](execucao.png)
+![](https://raw.githubusercontent.com/Schwarzam/Trabalhos-facul/master/computacao_paralela/Lab_07/execucao.png)
