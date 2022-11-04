@@ -6,12 +6,14 @@ double f(double x){
     return exp(x);
 }
 
-double Trap(double a, double b, int n, double* global_result_p){
+int thread_count = 2;
+
+double Trap(double a, double b, int n){
     double h, x, my_result;
     double local_a, local_b;
     int i, local_n;
     int my_rank = omp_get_thread_num();
-    int thread_count = omp_get_num_threads();
+    //int thread_count = omp_get_num_threads();
 
     h = (b - a) / n;
     local_n = n/thread_count;
@@ -31,19 +33,22 @@ int main(int argc, char *argv[]){
     double global_result = 0.0;
     double a, b;
     int n;
-    int thread_count = 4;
+    
+    a = 100;
+    b = 99;
+    n = 100;
 
-    std::cout << "Entre a: ";
-    std::cin >> a;
+    // std::cout << "Entre a: ";
+    // std::cin >> a;
 
-    std::cout << "Entre b: ";
-    std::cin >> b;
+    // std::cout << "Entre b: ";
+    // std::cin >> b;
 
-    std::cout << "Entre n: ";
-    std::cin >> n;
+    // std::cout << "Entre n: ";
+    // std::cin >> n;
 
     #pragma omp parallel num_threads(thread_count) reduction(+: global_result)
-    global_result += Trap(a, b, n, &global_result);
+    global_result += Trap(a, b, n);
 
     std::cout << "Com " << n << " trapezios a aproximacao é: " << global_result << std::endl;
     return 0;
