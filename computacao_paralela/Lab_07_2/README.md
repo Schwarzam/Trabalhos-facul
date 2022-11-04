@@ -38,6 +38,10 @@ Testes usando dois métodos diferentes de controle de acesso à região crítica
 ![](https://raw.githubusercontent.com/Schwarzam/Trabalhos-facul/master/computacao_paralela/Lab_07_2/reduction.png)
 
 
+### Comentários
+
+É possível perceber que antes de maneira geral o método **reduction** é um pouco mais eficiente do que o critical. 
+
 ### alguns prints da execução:
 
 ![](https://raw.githubusercontent.com/Schwarzam/Trabalhos-facul/master/computacao_paralela/Lab_07_2/execucao.png)
