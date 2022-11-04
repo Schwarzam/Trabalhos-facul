@@ -6,7 +6,7 @@ double f(double x){
     return exp(x);
 }
 
-int thread_count = 2;
+int thread_count = 8;
 
 double Trap(double a, double b, int n){
     double h, x, my_result;
@@ -33,10 +33,10 @@ int main(int argc, char *argv[]){
     double global_result = 0.0;
     double a, b;
     int n;
-    
+
     a = 100;
     b = 99;
-    n = 100;
+    n = 1000000000;
 
     // std::cout << "Entre a: ";
     // std::cin >> a;
@@ -50,6 +50,7 @@ int main(int argc, char *argv[]){
     #pragma omp parallel num_threads(thread_count) reduction(+: global_result)
     global_result += Trap(a, b, n);
 
+    std::cout << "Com " << thread_count << "threads" << std::endl;
     std::cout << "Com " << n << " trapezios a aproximacao é: " << global_result << std::endl;
     return 0;
 }

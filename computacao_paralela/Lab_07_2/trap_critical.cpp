@@ -36,7 +36,7 @@ int main(int argc, char *argv[]){
 
     a = 100;
     b = 99;
-    n = 100;
+    n = 1000000000;
 
     // std::cout << "Entre a: ";
     // std::cin >> a;
@@ -50,6 +50,7 @@ int main(int argc, char *argv[]){
     #pragma omp parallel num_threads(thread_count)
     Trap(a, b, n, &global_result);
 
+    std::cout << "Com " << thread_count << "threads" << std::endl;
     std::cout << "Com " << n << " trapezios a aproximacao é: " << global_result << std::endl;
     return 0;
 }
