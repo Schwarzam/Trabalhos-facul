@@ -28,3 +28,12 @@ Valor de T: 200000
 | **media** | 37,809s | 28,193s | 16,430s | 9,228s 
 | **speedup** | 1 | 1.341 | 2.301 | 4.097
 
+#### grafico speedup x num_cpus
+
+![](https://raw.githubusercontent.com/Schwarzam/Trabalhos-facul/master/computacao_paralela/PROJ_V3/grafico.png)
+
+<br>
+
+#### print da execucao:
+
+![](https://raw.githubusercontent.com/Schwarzam/Trabalhos-facul/master/computacao_paralela/PROJ_V3/execucao.png)
