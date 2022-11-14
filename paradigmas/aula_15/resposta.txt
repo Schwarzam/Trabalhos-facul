@@ -1,0 +1,70 @@
+Ex1.
+
+mae(joana, pedro).
+mae(ana, joana).
+pai(pedro, jose).
+pai(jose, clara).
+
+avó(X,Z) :- (mae(X,Y),mae(Y,Z)); (mae(X,Y),pai(Y,Z)).
+avô(X,Z) :- (pai(X,Y),pai(Y,Z)); (pai(X,Y),mae(Y,Z)).
+bisavó(X, Z) :- (mae(X, Y), avó(Y, Z)) ; (mae(X,Y), avô(Y,Z)).
+
+?- avó(joana, jose) -> true
+?- avô(pedro, clara) -> true
+?- bisavó(ana, X) -> X = jose
+
+
+Ex2
+
+gosta(maria, comida).
+gosta(maria, vinho).
+gosta(jose, peixe).
+gosta(jose, maria).
+gosta(jose, vodka).
+gosta(joao, vinho).
+gosta(joao, maria).
+
+gostam(X, Y, Z) :- gosta(X, Z), gosta(Y, Z).
+
+?- gostam(joao, maria, Z) -> Z = vinho 
+?- gostam(joao, jose, Z) -> Z = maria
+
+
+Ex3.
+
+genitor(paulo, ana).
+genitor(rose, ana).
+genitor(paulo, liliane).
+genitor(rose, liliane).
+homem(paulo).
+mulher(rose).
+mulher(ana).
+mulher(liliane).
+
+pai(X, Y) :- genitor(X, Y), homem(X).
+mae(X, Y) :- genitor(X, Y), mulher(X).
+irma(X, Y) :- genitor(Z, X), genitor(Z, Y), mulher(X).
+irmao(X, Y) :- genitor(Z, X), genitor(Z, Y), homem(X).
+avô(X, Y) :- genitor(X, Z), genitor(Z, Y), homem(X).
+avó(X, Y) :- genitor(X, Z), genitor(Z, Y), mulher(X).
+primo(X, Y) :- genitor(Z, X), (irmao(Z, W);irma(Z, W)), genitor(W, Y), homem(X).
+prima(X, Y) :- genitor(Z, X), (irmao(Z, W);irma(Z, W)), genitor(W, Y), mulher(X).
+tio(X, Y) :- genitor(Z, X), irmao(Z, Y).
+tia(X, Y) :- genitor(Z, X), irma(Z, Y).
+filho(X, Y) :- genitor(Y, X), homem(X).
+filha(X, Y) :- genitor(Y, X), mulher(X).
+
+## Nao é possível fazer para Sogro, sogra, genro, nora uma vez que não tem nenhuma relação entre genitor e essas classes.
+
+
+
+Ex 4.
+
+?- gosta(maria,X). -> X = livro
+?- gosta(X, livro). -> X = maria
+?- gosta(Quem,Oque). -> Oque = peixe, Quem = joao
+?- gosta(X,Y). -> X = joao, Y = peixe
+?- gosta(X,X). -> false
+?- gosta(_a,_b). ->  _a = joao, _b = peixe
+?- gosta(A, peixe). -> A = joao
+?- gosta(Joao,Z). -> Joao = joao, Z = peixe
