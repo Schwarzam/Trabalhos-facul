@@ -7,8 +7,20 @@ import (
 	"math/big"
 )
 
-func appendToArray(arr *[]int, n int, index int) {
-
+func appendToArray(arr []int, n int, index int) []int {
+	if len(arr) == index {
+		arr = append(arr, index*index)
+	}
+	if len(arr) > index {
+		arr[index] = index * index
+	}
+	if len(arr) < index {
+		for x := 0; x <= index-len(arr); x++ {
+			arr = append(arr, -1)
+		}
+		arr = append(arr, index*index)
+	}
+	return arr
 }
 
 func factorial(n int) *big.Int {
@@ -46,17 +58,17 @@ func main() {
 	// fmt.Printf("Insira o valor de T: ")
 	// fmt.Scanf("%d", &t)
 
-	factorials_arr := []int{-1}
-	factorials_arr = append(factorials_arr, 0)
+	arr := []int{-1}
+	arr = append(arr, 0)
 
-	for key, value := range 10 {
-		if len(factorials_arr) >= key {
+	e := [8]int{0, 2, 1, 3, 5, 4, 7, 9}
 
-		}
+	for _, value := range e {
+
+		arr = appendToArray(arr, 0, value)
 	}
 
-	fmt.Println(len(factorials_arr))
-	fmt.Println(factorials_arr)
+	fmt.Println(arr)
 	// fmt.Printf("Resposta obtida: ")
 	// fmt.Println(res.Text('f', -1))
 }
