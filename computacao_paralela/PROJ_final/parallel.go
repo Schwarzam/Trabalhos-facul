@@ -5,108 +5,58 @@ package main
 import (
 	"fmt"
 	"math/big"
-	"runtime"
-	"sync"
 )
 
-func makeArray(tam int) []int { //Cria um array de 1 até tam
-	a := make([]int, tam-1+1)
-	for i := range a {
-		a[i] = 1 + i
-	}
-	return a
+func appendToArray(arr *[]int, n int, index int) {
+
 }
 
-func multip(wg *sync.WaitGroup, s []int, c chan *big.Int) { //Multiplica todos elementos do vetor
-	defer wg.Done()
-
-	sum := big.NewInt(1)
-	for _, v := range s {
-		sum.Mul(sum, big.NewInt(int64(v)))
-	}
-	c <- sum // adicionar soma ao channel
-	return
-}
-
-func dividirArray(slice []int, chunkSize int) [][]int { //Dividir array em X partes
-	var chunks [][]int
-	for {
-		if len(slice) == 0 {
-			break
-		}
-
-		// Nao cortar além da capacidade
-		if len(slice) < chunkSize {
-			chunkSize = len(slice)
-		}
-
-		chunks = append(chunks, slice[0:chunkSize])
-		slice = slice[chunkSize:]
-	}
-	return chunks
-}
-
-func factorial(wg *sync.WaitGroup, num int, threads int) *big.Int {
-	arr := makeArray(num) //Cria um array de 1 ao numero
-	size := (len(arr) / threads) + 1
-
-	arrays := dividirArray(arr, size)       //Divide array em pequenos pedacos de tamanho size
-	channel := make(chan *big.Int, threads) //Canal compartilhado com threads para troca de infos
-
-	for chunk := range arrays {
-		wg.Add(1)
-		go multip(wg, arrays[chunk], channel) //Faz a multiplicacao dos elementos no array
-	}
-
-	go func() { //Espera todas threads terminarem
-		wg.Wait()
-		close(channel)
-	}()
+func factorial(n int) *big.Int {
+	start := big.NewInt(1)
+	end := big.NewInt(int64(n + 1))
+	one := big.NewInt(1)
 
 	res := big.NewInt(1)
-	for n := range channel {
-		res.Mul(res, n) //Multiplica os resultados de cada thread
+
+	// i must be a new int so that it does not overwrite start
+	for i := new(big.Int).Set(start); i.Cmp(end) < 0; i.Add(i, one) {
+		res.Mul(res, i)
 	}
 	return res
 }
 
-func main() {
-	runtime.GOMAXPROCS(runtime.NumCPU()) //Utilizar todos cores do CPU
-
-	var wg sync.WaitGroup
-	THREADS := runtime.NumCPU()
-
-	var prec uint
-	prec = 1000
-
-	fmt.Printf("Rodando %d CPUs com %d threads \n", runtime.NumCPU(), THREADS)
-	res := big.NewFloat(0)
-	res.SetPrec(prec)
-
-	var t int
-	fmt.Printf("Insira o valor de T: ")
-	fmt.Scanf("%d", &t)
-
-	for i := 0; i < t; i++ {
-		f := new(big.Float).SetPrec(prec)
-		f.Quo(big.NewFloat(1), new(big.Float).SetInt(factorial(&wg, i, THREADS)))
-		res = res.Add(res, f)
-	}
-
-	fmt.Printf("Resposta obtida: ")
-	fmt.Println(res.Text('f', -1))
+func printSlice(s []int) {
+	fmt.Printf("len=%d cap=%d %v\n", len(s), cap(s), s)
 }
 
-// Rodando no ubuntu 22.04 AWS
-// go version go1.19.2 linux/amd64
+func main() {
+	// runtime.GOMAXPROCS(runtime.NumCPU()) //Utilizar todos cores do CPU
 
-// $time go run parallel.go
+	// var wg sync.WaitGroup
+	// THREADS := runtime.NumCPU()
 
-// Rodando 2 CPUs com 2 threads
-// Insira o valor de T: 10000
-// Resposta obtida: 2.71828182845904523536628951163
-// Resposta real: 2.718281828459045235360287471352662497757247093699
+	// var prec uint
+	// prec = 1000
 
-// real    0m23.893s
-// user    0m27.889s
-// sys     0m0.842s
+	// fmt.Printf("Rodando %d CPUs com %d threads \n", runtime.NumCPU(), THREADS)
+	// res := big.NewFloat(0)
+	// res.SetPrec(prec)
+
+	// var t int
+	// fmt.Printf("Insira o valor de T: ")
+	// fmt.Scanf("%d", &t)
+
+	factorials_arr := []int{-1}
+	factorials_arr = append(factorials_arr, 0)
+
+	for key, value := range 10 {
+		if len(factorials_arr) >= key {
+
+		}
+	}
+
+	fmt.Println(len(factorials_arr))
+	fmt.Println(factorials_arr)
+	// fmt.Printf("Resposta obtida: ")
+	// fmt.Println(res.Text('f', -1))
+}
