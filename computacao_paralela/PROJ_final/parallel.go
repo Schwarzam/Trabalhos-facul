@@ -7,39 +7,44 @@ import (
 	"math/big"
 )
 
-func appendToArray(arr []int, n int, index int) []int {
-	if len(arr) == index {
-		arr = append(arr, index*index)
+func getLastIndex(arr []big.Int, actualIndex int) (int, big.Int) {
+	if len(arr)-1 < actualIndex {
+		actualIndex = len(arr) - 1
 	}
-	if len(arr) > index {
-		arr[index] = index * index
-	}
-	if len(arr) < index {
-		for x := 0; x <= index-len(arr); x++ {
-			arr = append(arr, -1)
+	for i := actualIndex; i > 0; i-- {
+		if arr[i].String() != "-1" {
+			return i, arr[i]
 		}
-		arr = append(arr, index*index)
+	}
+	return 0, *big.NewInt(0)
+}
+
+func appendToArray(arr []big.Int, n big.Int, index int64) []big.Int {
+	if len(arr) == int(index) {
+		arr = append(arr, *big.NewInt(index * index))
+	}
+	if len(arr) > int(index) {
+		arr[index] = *big.NewInt(index * index)
+	}
+	if len(arr) < int(index) {
+		for x := 0; x <= int(index)-len(arr); x++ {
+			arr = append(arr, *big.NewInt(-1))
+		}
+		arr = append(arr, *big.NewInt(index * index))
 	}
 	return arr
 }
 
-func factorial(n int) *big.Int {
-	start := big.NewInt(1)
-	end := big.NewInt(int64(n + 1))
-	one := big.NewInt(1)
-
+func factorial(n int, start int, startvalue big.Int) *big.Int {
 	res := big.NewInt(1)
-
-	// i must be a new int so that it does not overwrite start
-	for i := new(big.Int).Set(start); i.Cmp(end) < 0; i.Add(i, one) {
-		res.Mul(res, i)
+	for i := n; i > start; i-- {
+		res = res.Mul(res, big.NewInt(int64(i)))
 	}
+	res = res.Mul(res, &startvalue)
 	return res
 }
 
-func printSlice(s []int) {
-	fmt.Printf("len=%d cap=%d %v\n", len(s), cap(s), s)
-}
+func calculate_routine()
 
 func main() {
 	// runtime.GOMAXPROCS(runtime.NumCPU()) //Utilizar todos cores do CPU
@@ -58,17 +63,17 @@ func main() {
 	// fmt.Printf("Insira o valor de T: ")
 	// fmt.Scanf("%d", &t)
 
-	arr := []int{-1}
-	arr = append(arr, 0)
-
+	arr := []big.Int{}
+	arr = append(arr, *big.NewInt(1))
 	e := [8]int{0, 2, 1, 3, 5, 4, 7, 9}
 
 	for _, value := range e {
-
-		arr = appendToArray(arr, 0, value)
+		arr = appendToArray(arr, *big.NewInt(int64(value)), int64(value))
 	}
 
 	fmt.Println(arr)
+	fmt.Println(getLastIndex(arr, 9))
+	fmt.Println(factorial(6, 3, *big.NewInt(6)))
 	// fmt.Printf("Resposta obtida: ")
 	// fmt.Println(res.Text('f', -1))
 }
