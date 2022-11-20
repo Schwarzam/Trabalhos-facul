@@ -5,7 +5,9 @@ package main
 import (
 	"fmt"
 	"math/big"
+	"os"
 	"runtime"
+	"strconv"
 	"sync"
 )
 
@@ -25,11 +27,17 @@ func factorial(n int, start int, startvalue big.Int, channel chan *big.Int) {
 }
 
 func main() {
+
 	num_cpu := runtime.NumCPU()
 	runtime.GOMAXPROCS(num_cpu) //Utilizar todos cores do CPU
 
 	var prec uint
-	prec = 100000
+	if len(os.Args) > 1 {
+		tmp, _ := strconv.ParseInt(os.Args[1], 0, 64)
+		prec = uint(tmp)
+	} else {
+		prec = 100000
+	}
 
 	fmt.Printf("Rodando %d CPUs com %d threads \n", runtime.NumCPU(), num_cpu)
 	res := big.NewFloat(1)
@@ -63,9 +71,21 @@ func main() {
 			f.Quo(big.NewFloat(1), new(big.Float).SetInt(n))
 			res = res.Add(res, f)
 		}
-		fmt.Printf("Obtained: %s \nT value: %d \n", res.Text('f', -1), counter)
+		//fmt.Printf("Obtained: %s \nT value: %d \n", res.Text('f', -1), counter)
+		fmt.Printf("T value: %d \n", counter)
 		biggerIndex = counter
+
+		if res.Text('f', -1)[0:len(res.Text('f', -1))-3] == euler[0:len(res.Text('f', -1))-3] {
+			fmt.Println("Converged to max precision.")
+			fmt.Printf("Obtained: %s \nT value: %d \n", res.Text('f', -1), counter)
+			break
+		}
+
+		if counter%5*num_cpu == 0 {
+			fmt.Printf("Current preciosion: %d number of decimal digits.\n", checkPrecision(res.Text('f', -1))-2)
+		}
 	}
+
 	// fmt.Printf("Resposta obtida: ")
 	// fmt.Println(res.Text('f', -1))
 }
