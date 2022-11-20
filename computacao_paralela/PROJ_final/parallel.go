@@ -29,7 +29,7 @@ func main() {
 	runtime.GOMAXPROCS(num_cpu) //Utilizar todos cores do CPU
 
 	var prec uint
-	prec = 1000
+	prec = 100000
 
 	fmt.Printf("Rodando %d CPUs com %d threads \n", runtime.NumCPU(), num_cpu)
 	res := big.NewFloat(1)
@@ -63,8 +63,7 @@ func main() {
 			f.Quo(big.NewFloat(1), new(big.Float).SetInt(n))
 			res = res.Add(res, f)
 		}
-		fmt.Println("Obtained: ", res)
-		fmt.Printf("T value: %d \n", counter)
+		fmt.Printf("Obtained: %s \nT value: %d \n", res.Text('f', -1), counter)
 		biggerIndex = counter
 	}
 	// fmt.Printf("Resposta obtida: ")
