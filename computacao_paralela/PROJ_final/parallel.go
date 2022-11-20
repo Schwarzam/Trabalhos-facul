@@ -5,7 +5,20 @@ package main
 import (
 	"fmt"
 	"math/big"
+	"sync"
 )
+
+var arr []big.Int
+var mu sync.Mutex
+
+type arr_struct struct {
+	MU  sync.Mutex
+	arr []big.Int
+}
+
+var data arr_struct
+
+var wg sync.WaitGroup
 
 func getLastIndex(arr []big.Int, actualIndex int) (int, big.Int) {
 	if len(arr)-1 < actualIndex {
@@ -19,20 +32,26 @@ func getLastIndex(arr []big.Int, actualIndex int) (int, big.Int) {
 	return 0, *big.NewInt(0)
 }
 
-func appendToArray(arr []big.Int, n big.Int, index int64) []big.Int {
-	if len(arr) == int(index) {
-		arr = append(arr, *big.NewInt(index * index))
+func appendToArray(n big.Int, index int64) {
+	fmt.Println()
+	fmt.Println(n, index, len(data.arr))
+	fmt.Println(data.arr)
+	if len(data.arr) == int(index) {
+		data.arr = append(data.arr, *big.NewInt(index * index))
 	}
-	if len(arr) > int(index) {
-		arr[index] = *big.NewInt(index * index)
+	if len(data.arr) > int(index) {
+		data.arr[index-1] = *big.NewInt(index * index)
 	}
-	if len(arr) < int(index) {
-		for x := 0; x <= int(index)-len(arr); x++ {
-			arr = append(arr, *big.NewInt(-1))
+	if len(data.arr) < int(index) {
+		fmt.Println(int(index) - len(data.arr))
+		for x := 0; x <= int(index)-len(data.arr); x++ {
+			fmt.Println(x)
+			data.arr = append(data.arr, *big.NewInt(-1))
 		}
-		arr = append(arr, *big.NewInt(index * index))
+		data.arr = append(data.arr, *big.NewInt(index * index))
 	}
-	return arr
+	fmt.Println(data.arr)
+	fmt.Println()
 }
 
 func factorial(n int, start int, startvalue big.Int) *big.Int {
@@ -44,7 +63,17 @@ func factorial(n int, start int, startvalue big.Int) *big.Int {
 	return res
 }
 
-func calculate_routine()
+func printarr() {
+	fmt.Println(data.arr)
+}
+
+func teste(n big.Int, index int64) {
+	defer wg.Done()
+
+	data.MU.Lock()
+	appendToArray(n, index)
+	data.MU.Unlock()
+}
 
 func main() {
 	// runtime.GOMAXPROCS(runtime.NumCPU()) //Utilizar todos cores do CPU
@@ -63,17 +92,19 @@ func main() {
 	// fmt.Printf("Insira o valor de T: ")
 	// fmt.Scanf("%d", &t)
 
-	arr := []big.Int{}
-	arr = append(arr, *big.NewInt(1))
-	e := [8]int{0, 2, 1, 3, 5, 4, 7, 9}
+	data.arr = append(data.arr, *big.NewInt(1))
+	e := [8]int{2, 1, 3, 5, 4, 7, 9, 11}
 
 	for _, value := range e {
-		arr = appendToArray(arr, *big.NewInt(int64(value)), int64(value))
+		wg.Add(1)
+		go teste(*big.NewInt(int64(value)), int64(value))
 	}
 
-	fmt.Println(arr)
-	fmt.Println(getLastIndex(arr, 9))
-	fmt.Println(factorial(6, 3, *big.NewInt(6)))
+	wg.Wait()
+
+	printarr()
 	// fmt.Printf("Resposta obtida: ")
 	// fmt.Println(res.Text('f', -1))
 }
+
+//https://www.math.utah.edu/~pa/math/e.html
