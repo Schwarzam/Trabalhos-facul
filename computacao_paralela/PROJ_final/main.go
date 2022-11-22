@@ -75,7 +75,7 @@ func main() {
 		fmt.Printf("T value: %d \n", counter)
 		biggerIndex = counter
 
-		if res.Text('f', -1)[0:len(res.Text('f', -1))-3] == euler[0:len(res.Text('f', -1))-3] {
+		if res.Text('f', -1)[0:len(res.Text('f', -1))-3] == euler[0:len(res.Text('f', -1))-3] && counter > 4 {
 			fmt.Println("Converged to max precision.")
 			fmt.Printf("Obtained: %s \nT value: %d \n", res.Text('f', -1), counter)
 			break
