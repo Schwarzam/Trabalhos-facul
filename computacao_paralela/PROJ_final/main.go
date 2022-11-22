@@ -82,15 +82,16 @@ func main() {
 		fmt.Printf("T value: %d \n", counter)
 		biggerIndex = counter
 
-		if res.Text('f', -1)[0:len(res.Text('f', -1))-3] == euler[0:len(res.Text('f', -1))-3] && counter > 4 {
-			fmt.Println("Converged to max precision.")
-			t2 := time.Now()
-			diff := t2.Sub(t1)
+		if counter > 4 {
+			if res.Text('f', -1)[0:len(res.Text('f', -1))-3] == euler[0:len(res.Text('f', -1))-3] {
+				fmt.Println("Converged to max precision.")
+				t2 := time.Now()
+				diff := t2.Sub(t1)
 
-			fmt.Printf("Obtained: %d correct decimalss \nT value: %d \n", checkPrecision(res.Text('f', -1))-2, counter)
+				fmt.Printf("Obtained: %d correct decimalss \nT value: %d \n", checkPrecision(res.Text('f', -1))-2, counter)
 
-			f, _ := os.Create("result.txt")
-			_, err2 := f.WriteString(fmt.Sprintf(`Converged to max precision.
+				f, _ := os.Create("result.txt")
+				_, err2 := f.WriteString(fmt.Sprintf(`Converged to max precision.
 Threads = %d
 T = %d
 Time = %s
@@ -98,13 +99,14 @@ Res bits precision = %d
 Decimal precision (number of correct decimals) = %d
 Euler: 
 %s
-			`, num_cpu, counter, diff, prec, checkPrecision(res.Text('f', -1))-2, res.Text('f', -1)))
+				`, num_cpu, counter, diff, prec, checkPrecision(res.Text('f', -1))-2, res.Text('f', -1)))
 
-			if err2 != nil {
-				fmt.Println(err2)
+				if err2 != nil {
+					fmt.Println(err2)
+				}
+
+				break
 			}
-
-			break
 		}
 
 		if counter%5*num_cpu == 0 {
