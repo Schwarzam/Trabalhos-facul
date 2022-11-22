@@ -9,6 +9,7 @@ import (
 	"runtime"
 	"strconv"
 	"sync"
+	"time"
 )
 
 var arr []big.Int
@@ -27,9 +28,16 @@ func factorial(n int, start int, startvalue big.Int, channel chan *big.Int) {
 }
 
 func main() {
+	t1 := time.Now()
 
-	num_cpu := runtime.NumCPU()
-	runtime.GOMAXPROCS(num_cpu) //Utilizar todos cores do CPU
+	var num_cpu int
+	if len(os.Args) > 2 {
+		tmp, _ := strconv.ParseInt(os.Args[2], 0, 64)
+		num_cpu = int(tmp)
+	} else {
+		num_cpu = runtime.NumCPU() //Utilizar todos cores do CPU
+	}
+	runtime.GOMAXPROCS(num_cpu)
 
 	var prec uint
 	if len(os.Args) > 1 {
@@ -49,7 +57,6 @@ func main() {
 	biggerIndex := 0
 
 	for true {
-
 		channel := make(chan *big.Int, num_cpu)
 
 		for i := 0; i < num_cpu; i++ {
@@ -77,7 +84,26 @@ func main() {
 
 		if res.Text('f', -1)[0:len(res.Text('f', -1))-3] == euler[0:len(res.Text('f', -1))-3] && counter > 4 {
 			fmt.Println("Converged to max precision.")
-			fmt.Printf("Obtained: %s \nT value: %d \n", res.Text('f', -1), counter)
+			t2 := time.Now()
+			diff := t2.Sub(t1)
+
+			fmt.Printf("Obtained: %d correct decimalss \nT value: %d \n", checkPrecision(res.Text('f', -1))-2, counter)
+
+			f, _ := os.Create("result.txt")
+			_, err2 := f.WriteString(fmt.Sprintf(`Converged to max precision.
+Threads = %d
+T = %d
+Time = %s
+Res bits precision = %d
+Decimal precision (number of correct decimals) = %d
+Euler: 
+%s
+			`, num_cpu, counter, diff, prec, checkPrecision(res.Text('f', -1))-2, res.Text('f', -1)))
+
+			if err2 != nil {
+				fmt.Println(err2)
+			}
+
 			break
 		}
 
@@ -85,9 +111,6 @@ func main() {
 			fmt.Printf("Current preciosion: %d number of decimal digits.\n", checkPrecision(res.Text('f', -1))-2)
 		}
 	}
-
-	// fmt.Printf("Resposta obtida: ")
-	// fmt.Println(res.Text('f', -1))
 }
 
 //https://www.math.utah.edu/~pa/math/e.html
