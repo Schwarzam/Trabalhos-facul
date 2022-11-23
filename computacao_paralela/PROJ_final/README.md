@@ -55,7 +55,7 @@ Total Number of Cores:	8
 
 **threads X speedup**
 
-![](https://raw.githubusercontent.com/Schwarzam/Trabalhos-facul/master/computacao_paralela/PROJ_final/plots/speedup_plot_mac.png)
+![](./plots/speedup_plot_mac.png)
 
 
 
