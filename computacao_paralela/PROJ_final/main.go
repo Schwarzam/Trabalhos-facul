@@ -18,6 +18,7 @@ var mu sync.Mutex
 var wg sync.WaitGroup
 
 func factorial(n int, start int, startvalue big.Int, channel chan *big.Int) {
+	//Calcula o fatorial, pode fornecer valores intermediários para agilizar.
 	defer wg.Done()
 	res := big.NewInt(1)
 	for i := n; i > start; i-- {
@@ -30,6 +31,7 @@ func factorial(n int, start int, startvalue big.Int, channel chan *big.Int) {
 func main() {
 	t1 := time.Now()
 
+	//Checa se tem input para numero de threads
 	var num_cpu int
 	if len(os.Args) > 2 {
 		tmp, _ := strconv.ParseInt(os.Args[2], 0, 64)
@@ -39,6 +41,7 @@ func main() {
 	}
 	runtime.GOMAXPROCS(num_cpu)
 
+	//Checa se tem input para precisao em bits
 	var prec uint
 	if len(os.Args) > 1 {
 		tmp, _ := strconv.ParseInt(os.Args[1], 0, 64)
@@ -56,6 +59,7 @@ func main() {
 	bigger := big.NewInt(1)
 	biggerIndex := 0
 
+	//While True
 	for true {
 		channel := make(chan *big.Int, num_cpu)
 
@@ -63,15 +67,15 @@ func main() {
 			wg.Add(1)
 			counter++
 			go factorial(counter, biggerIndex, *bigger, channel)
-		}
+		} //Entrega ã num_cpu threads os proximos fatoriais com o resultado da ultima rodada já para agilizar.
 
 		wg.Wait()
 		close(channel)
 
-		for n := range channel {
+		for n := range channel { //Recebe os resultados de cada thread pelo canal
 			switch n.Cmp(bigger) {
 			case 1:
-				bigger = n
+				bigger = n //Salva o resultado mais alto da rodada.
 			}
 
 			f := new(big.Float).SetPrec(prec)
@@ -80,10 +84,10 @@ func main() {
 		}
 		//fmt.Printf("Obtained: %s \nT value: %d \n", res.Text('f', -1), counter)
 		fmt.Printf("T value: %d \n", counter)
-		biggerIndex = counter
+		biggerIndex = counter //Salva o indice do maior numero da rodada.
 
 		if counter > 4 {
-			if res.Text('f', -1)[0:len(res.Text('f', -1))-3] == euler[0:len(res.Text('f', -1))-3] {
+			if res.Text('f', -1)[0:len(res.Text('f', -1))-3] == euler[0:len(res.Text('f', -1))-3] { //Significa que chegou na precisao maxima
 				fmt.Println("Converged to max precision.")
 				t2 := time.Now()
 				diff := t2.Sub(t1)
