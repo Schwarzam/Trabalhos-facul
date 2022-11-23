@@ -12,7 +12,7 @@ for t in t_counts:
     tempo_local = []
     for i in range(3):
         t1 = time.time()
-        os.system(f'go run main.go euler.go 1000 {t}')
+        os.system(f'go run main.go euler.go 10000 {t}')
         t2 = time.time()
         tf = t2 - t1
         tempo_local.append(tf)
@@ -21,6 +21,7 @@ for t in t_counts:
     tempos[str(t)] = tempo_local 
 
 data = {}
+data['threads'] = t_counts
 data['t1'] = []
 data['t2'] = []
 data['t3'] = []

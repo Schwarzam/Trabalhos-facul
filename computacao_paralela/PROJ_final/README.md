@@ -1,14 +1,10 @@
 ## Gustavo Bernard Schwarz 32141157
 
-## Execução em: 
- - Distributor ID: Ubuntu
- - Description:    Ubuntu 22.04.1 LTS
- - Release:        22.04
- - Codename:       jammy
-
 #####Objetivo: obter série de taylor convergindo para o número de euler 2.71….. Isso de maneira paralela. 
 
-Golang foi a linguagem escolhida pois é possível trabalhar com números decimais com precisão infinita de maneira simples. Além disso é possível paralelizar o código de maneira simples.
+Golang foi a linguagem escolhida pois é possível trabalhar com números decimais com precisão infinita de maneira simples. Além disso é possível paralelizar o código de maneira simples com goroutines.
+
+Uma goroutine é um thread de execução leve na linguagem de programação Go e uma função que executa simultaneamente com o restante do programa.
 
 #### Comando para rodar o código: 
 
@@ -19,14 +15,47 @@ go run main.go euler.go
 Para rodar com um número específico de bits de precisao na resposta.
 
 ```shell
-go run main.go euler.go <n_bits>
+go run main.go euler.go <n_bits> <n_threads>
 
-go run main.go euler.go 20000
+go run main.go euler.go 20000 8
 ```
 
 #### Referencia de resposta:
 
 [https://apod.nasa.gov/htmltest/gifcity/e.2mil](https://apod.nasa.gov/htmltest/gifcity/e.2mil) número de Euler com 2mi de casas decimais de precisão.
+
+<br>
+
+#### Estatísticas na AWS
+
+Instancia t2.medium
+ - Distributor ID: Ubuntu
+ - Description:    Ubuntu 22.04.1 LTS
+ - Release:        22.04
+ - Codename:       jammy
+ - 2 vCPU
+
+Precision bits = 10000
+
+| Threads |        t1 |        t2 |        t3 |    t_mean |   speedup |
+|---|----------:|----------:|----------:|----------:|----------:|
+| **1** | 86.6113   | 35.6052   | 31.9451   | 51.3872   |   1       |
+| **2**| 16.6953   | 43.141    | 46.5097   | 35.4487   |   1.44962 |
+| **4**| 24.0563   | 24.9394   | 24.0413   | 24.3457   |   2.11073 |
+| **8**| 13.2298   | 12.8377   | 14.6628   | 13.5768   |   3.78494 |
+| **16**|  7.22147  |  7.74812  |  4.28001  |  6.41653  |   8.00856 |
+| **32**|  1.27711  |  1.27978  |  1.28171  |  1.27954  |  40.1608  |
+| **64**|  0.768812 |  0.767454 |  0.768751 |  0.768339 |  66.8809  |
+| **128**|  0.518584 |  0.521762 |  0.511251 |  0.517199 |  99.3567  |
+| **256**|  0.418542 |  0.415209 |  0.421184 |  0.418312 | 122.844   |
+| **512**|  0.411485 |  0.410814 |  0.418102 |  0.413467 | 124.284   |
+| **768**|  0.433839 |  0.433866 |  0.428772 |  0.432159 | 118.908   |
+| **1024**|  0.530266 |  0.531514 |  0.538492 |  0.533424 |  96.3346  |
+| **1536**|  0.486262 |  0.577455 |  0.580947 |  0.548222 |  93.7344  |
+
+**threads X speedup**
+
+![](./plots/speedup_plot_aws.png)
 
 <br>
 
@@ -36,6 +65,8 @@ Apple clang version 13.1.6 (clang-1316.0.21.2.5)
 Target: arm64-apple-darwin21.3.0
 Chip:	Apple M1 Pro
 Total Number of Cores:	8
+
+Precision bits = 30000
 
 | Threads | t1 | t2 | t3 | t_mean | speedup |
 |--------|-----|----|----|--------|---------|
@@ -57,8 +88,27 @@ Total Number of Cores:	8
 
 ![](./plots/speedup_plot_mac.png)
 
+Precision bits = 10000
 
+|   threads |        t1 |        t2 |        t3 |    t_mean |   speedup |
+|----------:|----------:|----------:|----------:|----------:|----------:|
+|         1 | 26.3564   | 26.3531   | 26.3095   | 26.3397   |   1       |
+|         2 | 13.4171   | 13.4336   | 13.4524   | 13.4344   |   1.96062 |
+|         4 |  6.99337  |  6.95834  |  6.94976  |  6.96716  |   3.78055 |
+|         8 |  3.73213  |  3.71453  |  3.72342  |  3.72336  |   7.07417 |
+|        16 |  2.09227  |  2.0938   |  2.09323  |  2.0931   |  12.5841  |
+|        32 |  1.2775   |  1.27862  |  1.27144  |  1.27585  |  20.6448  |
+|        64 |  0.878737 |  0.876571 |  0.866273 |  0.87386  |  30.1417  |
+|       128 |  0.661532 |  0.670407 |  0.671066 |  0.667669 |  39.4502  |
+|       256 |  0.594797 |  0.59049  |  0.626849 |  0.604045 |  43.6055  |
+|       512 |  0.56638  |  0.564862 |  0.569153 |  0.566798 |  46.471   |
+|       768 |  0.551078 |  0.553137 |  0.55286  |  0.552358 |  47.6859  |
+|      1024 |  0.606948 |  0.587375 |  0.594545 |  0.596289 |  44.1726  |
+|      1536 |  0.556001 |  0.551493 |  0.569324 |  0.558939 |  47.1244  |
 
+**threads X speedup**
+
+![](./plots/speedup_plot_mac2.png)
 
 
 
