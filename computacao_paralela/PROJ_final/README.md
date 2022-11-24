@@ -6,6 +6,13 @@ Golang foi a linguagem escolhida pois é possível trabalhar com números decima
 
 Uma goroutine é um thread de execução leve na linguagem de programação Go e uma função que executa simultaneamente com o restante do programa.
 
+#### Instalar Go no Ubuntu 22.04:
+
+```
+sudo apt update
+sudo apt install golang-go
+```
+
 #### Comando para rodar o código: 
 
 ```shell
@@ -25,6 +32,28 @@ go run main.go euler.go 20000 8
 [https://apod.nasa.gov/htmltest/gifcity/e.2mil](https://apod.nasa.gov/htmltest/gifcity/e.2mil) número de Euler com 2mi de casas decimais de precisão.
 
 <br>
+
+#### Resultados:
+
+Medi os resultados de acordo com o número referência no site da nasa que tem 2 mi de casas decimais. Nos resultados é possível ver o valor de T no qual a série de Taylor alcançou, o tempo, threads, o número de bits para os números de precisão arbitrária e o tanto de casas alcançadas (number of correct decimals). 
+
+Além disso screencast é a "captura" da tela durante toda execução do programa.
+
+Resultados se encontram na pasta results:
+
+O melhor até agora:
+
+```
+Converged to max precision.
+Threads = 1550
+T = 99200
+Time = 8h58m32.374919045s
+Res bits precision = 1500000
+Decimal precision (number of correct decimals) = 451542
+Screencast link: https://drive.google.com/file/d/16ySnVoIrIL2TpnMA1DqEa6AmFkm6Bdbi/view?usp=share_link
+```
+
+
 
 #### Estatísticas na AWS
 
@@ -61,10 +90,10 @@ Precision bits = 10000
 
 #### Estatísticas Apple m1:
 
-Apple clang version 13.1.6 (clang-1316.0.21.2.5)
-Target: arm64-apple-darwin21.3.0
-Chip:	Apple M1 Pro
-Total Number of Cores:	8
+ - Apple clang version 13.1.6 (clang-1316.0.21.2.5)
+ - Target: arm64-apple-darwin21.3.0
+ - Chip:	Apple M1 Pro
+ - Total Number of Cores:	8
 
 Precision bits = 30000
 
