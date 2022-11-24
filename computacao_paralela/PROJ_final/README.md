@@ -1,6 +1,6 @@
 ## Gustavo Bernard Schwarz 32141157
 
-##### Objetivo: obter série de taylor convergindo para o número de euler 2.71….. Isso de maneira paralela. 
+### Objetivo: obter série de taylor convergindo para o número de euler 2.71….. Isso de maneira paralela. 
 
 Golang foi a linguagem escolhida pois é possível trabalhar com números decimais com precisão infinita de maneira simples. Além disso é possível paralelizar o código de maneira simples com goroutines.
 
