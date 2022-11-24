@@ -139,7 +139,9 @@ Precision bits = 10000
 
 ![](./plots/speedup_plot_mac2.png)
 
+<br>
 
+#### Obs
 
-
+O arquivo speedup.py faz o calculo do algoritmo pra maquina, gerando a tabela de speedup e plots.
 
