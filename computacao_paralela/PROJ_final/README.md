@@ -1,6 +1,6 @@
 ## Gustavo Bernard Schwarz 32141157
 
-#####Objetivo: obter série de taylor convergindo para o número de euler 2.71….. Isso de maneira paralela. 
+##### Objetivo: obter série de taylor convergindo para o número de euler 2.71….. Isso de maneira paralela. 
 
 Golang foi a linguagem escolhida pois é possível trabalhar com números decimais com precisão infinita de maneira simples. Além disso é possível paralelizar o código de maneira simples com goroutines.
 
@@ -30,6 +30,14 @@ go run main.go euler.go 20000 8
 #### Referencia de resposta:
 
 [https://apod.nasa.gov/htmltest/gifcity/e.2mil](https://apod.nasa.gov/htmltest/gifcity/e.2mil) número de Euler com 2mi de casas decimais de precisão.
+
+<br>
+
+#### Estratégia adotada
+
+A estratégia adotada é rodar as X threads rodando fatoriais de 1 a X, pegar o maior número dessa rodada, esperar todas threads terminarem e depois rodar as threads com fatorial novamente mas partindo do maior resultado da última rodada. 
+
+O speedup não melhorou da última versão para essa, entretanto a estratégia deixou a solução bem mais rápida.
 
 <br>
 
