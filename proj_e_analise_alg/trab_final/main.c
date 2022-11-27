@@ -146,6 +146,7 @@ int main()
     }
     if (v != incendio){
         printf("Solucao nao encontrada!\n");
+        return 0;
     }
 
 
