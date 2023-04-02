@@ -1,6 +1,48 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+char alfabeto[10] = {-1};
+
+int transicoes_estados[100][2];
+char transicoes_simbolos[100];
+int n_transicoes = -1;
+
+char palavras_teste[100][100] = {-1};
+int n_palavras_teste = -1;
+
+int n_estados_finais = -1;
+int estados_finais[20];
+
+int sum = 0;
+
+int testaAFnD(
+        char palavra[],
+        int indice_palavra,
+        int estado_atual
+    ){
+
+    if (palavra[indice_palavra] == '\0'){
+        for (int i = 0; i < n_estados_finais; i++){
+            if (estado_atual == estados_finais[i]){
+                sum ++;
+            }
+        }
+    }
+
+    for (int i = 0; i < n_transicoes; i++){
+        if (palavra[indice_palavra] == transicoes_simbolos[i] && estado_atual == transicoes_estados[i][0]){
+            
+            sum = testaAFnD(palavra, indice_palavra + 1, transicoes_estados[i][1]);
+
+        }
+    }
+
+
+    
+    return sum;
+}
+
+
 int main() {
     char filename[256] = "input.txt";
 
@@ -19,31 +61,26 @@ int main() {
     char ch;
     int line_count = 1;
 
-    char alfabeto[10] = {-1};
+    
     int indice_alfabeto = 0;
 
     int n_estados = -1;
-    int n_estados_finais = -1;
-
-    int estados_finais[20];
+    
     for (int i = 0; i < 20; i++) {
         estados_finais[i] = -1;
     }
     int indice_estados_finais = 0;
-    int n_transicoes = -1;
+    
 
-    int transicoes_estados[100][2];
     for (int i = 0 ; i < 100; i++) {
         transicoes_estados[i][0] = -1;
         transicoes_estados[i][1] = -1;
     }
-    char transicoes_simbolos[100];
+    
     int indice_transicoes = 0;
     int indice_interno_transicoes = 0;
 
-    int n_palavras_teste = -1;
-
-    char palavras_teste[100][100] = {-1};
+    
     int indice_palavras_teste = 0;
 
     char last_char = ' ';
@@ -190,5 +227,26 @@ int main() {
     // Close the file
     fclose(file);
 
+    sum = 0;
+
+    printf("\n");
+    for (int i = 0; i < n_palavras_teste; i++){
+        if (palavras_teste[i][0] == '\0') {break;}
+        sum = 0;
+        testaAFnD( palavras_teste[i], 0, 0 );
+        
+        for (int j = 0; j < 100; j++){
+            if (palavras_teste[i][j] == '\0') {break;}
+            printf("%c", palavras_teste[i][j]);
+        }
+        if (sum != 0){
+            printf(" OK\n");
+        }else{
+            printf(" Not OK\n");
+        }
+        
+    }
+
     return 0;
 }
+
