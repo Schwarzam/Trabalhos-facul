@@ -19,7 +19,8 @@ int testaAFnD(
         char palavra[],
         int indice_palavra,
         int estado_atual
-    ){
+    ) // Função recursiva que testa se a palavra pertence ao AFnD
+    {
 
     if (palavra[indice_palavra] == '\0'){
         for (int i = 0; i < n_estados_finais; i++){
@@ -28,17 +29,12 @@ int testaAFnD(
             }
         }
     }
-
+    
     for (int i = 0; i < n_transicoes; i++){
         if (palavra[indice_palavra] == transicoes_simbolos[i] && estado_atual == transicoes_estados[i][0]){
-            
             sum = testaAFnD(palavra, indice_palavra + 1, transicoes_estados[i][1]);
-
         }
     }
-
-
-    
     return sum;
 }
 
