@@ -44,26 +44,23 @@ int testaAFnD(
 
 
 int main() {
-    char filename[256] = "input.txt";
+    char filename[256];
 
-    // Get the filename from the user
+    // Pegar nome do arquivo
     printf("Enter the filename: ");
-    // scanf("%255s", filename); // Limit the input to 255 characters to avoid buffer overflow
+    scanf("%255s", filename); // Limit the input to 255 characters to avoid buffer overflow
 
-    // Open the file for reading
+    // Abrir arquivo
     FILE* file = fopen(filename, "r");
     if (file == NULL) {
         perror("Error opening file");
         return EXIT_FAILURE;
     }
 
-    // Read and print the file content
     char ch;
     int line_count = 1;
 
-    
     int indice_alfabeto = 0;
-
     int n_estados = -1;
     
     for (int i = 0; i < 20; i++) {
