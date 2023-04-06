@@ -1,3 +1,6 @@
+// Gustavo Bernard Oliveira Schwarz 32141157
+// Paulo Henriques Camargo 32138121
+
 #include <stdio.h>
 #include <stdlib.h>
 
