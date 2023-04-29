@@ -9,14 +9,34 @@ RATE = 44100
 
 # Function to map frequency to note
 def frequency_to_note(frequency):
+    # Define the notes in an octave as a list of strings
     NOTES = 'C C# D D# E F F# G G# A A# B'.split()
+    
+    # If the frequency is below the lowest note on a piano (16.35 Hz, which is C0),
+    # return "Note out of range"
     if frequency < 16.35:
         return "Note out of range"
+    
+    # Calculate the note number using the formula:
+    # note_num = 12 * log2(frequency / reference_frequency)
+    # where the reference_frequency is 16.35 Hz (the frequency of C0)
     note_num = 12 * np.log2(frequency / 16.35)
+    
+    # Round the note number to the nearest integer to find the closest note
     rounded_note_num = int(round(note_num))
+    
+    # Calculate the octave of the note by integer-dividing the rounded_note_num by 12
+    # (since there are 12 notes in an octave)
     octave = rounded_note_num // 12
+    
+    # Calculate the index of the note within the octave by taking the modulo of
+    # the rounded_note_num and 12
     note_index = rounded_note_num % 12
+    
+    # Return the note as a formatted string, e.g., "C4", by looking up the note name
+    # using the note_index and appending the octave
     return f"{NOTES[note_index]}{octave}"
+
 
 # Initialize PyAudio
 audio = pyaudio.PyAudio()
