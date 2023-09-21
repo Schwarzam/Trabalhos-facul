@@ -7,13 +7,133 @@ Integra��o do analisador l�xico e analisador sint�tico
 #include <ctype.h>
 // ########### TIPOS DOS ANALISADOR LEXICO E SINTATICO
 typedef enum{
-    ERRO,
-    IDENTIFICADOR,
+    ALGORITMO, 
     NUMERO,
-    OP_SOMA,
-    OP_MULT,
+    DIVIDE,
+
+    VARIAVEL,
+    INTEIRO, 
+    LOGICO, 
+
+    INICIO, 
+    FIM,
+
+    ENTAO, 
+    SENAO, 
+
+    ENQUANTO, 
+    FACA, 
+    
+    LEIA, 
+    ESCREVA,
+
+    E, 
+    OU,
+
+    VERDADEIRO,
+    FALSO,
+
+    MENOR_QUE,
+    MAIOR_QUE,
+    MENOR_IGUAL,
+    MAIOR_IGUAL,
+    IGUAL,
+    DIFERENTE,
+
+    PONTO_VIRGULA, 
+    DOIS_PONTOS,
+    PONTO, 
+    VIRGULA,
+
+    ABRE_PARENTESES,
+    FECHA_PARENTESES,
+
+    SOMA,
+    MULTIPLICA,
+    SUBTRAI,
+
+    IDENTIFICADOR,
+    ERRO,
     EOS
 }TAtomo;
+
+char funcoes_sintatico[][30] = { 
+    "ALGORITMO", 
+    "NUMERO",
+    "DIVIDE",
+
+    "VARIAVEL",
+    "INTEIRO", 
+    "LOGICO", 
+
+    "INICIO", 
+    "FIM",
+
+    "ENTAO", 
+    "SENAO", 
+
+    "ENQUANTO", 
+    "FACA", 
+    
+    "LEIA", 
+    "ESCREVA",
+
+    "E", 
+    "OU",
+
+    "VERDADEIRO",
+    "FALSO",
+
+    "MENOR_QUE",
+    "MAIOR_QUE",
+    "MENOR_IGUAL",
+    "MAIOR_IGUAL",
+    "IGUAL",
+    "DIFERENTE",
+
+    "PONTO_VIRGULA", 
+    "DOIS_PONTOS",
+    "PONTO", 
+    "VIRGULA",
+
+    "ABRE_PARENTESES",
+    "FECHA_PARENTESES",
+
+    "SOMA",
+    "MULTIPLICA",
+    "SUBTRAI",
+
+    "IDENTIFICADOR",
+    "ERRO",
+    "EOS"
+};
+
+char palavras_reservadas[][30] = { 
+    "algoritmo", 
+    "numero",
+    "div",
+
+    "variavel",
+    "inteiro",
+    "logico",
+
+    "inicio", 
+    "fim",
+
+    "entao", 
+    "senao", 
+
+    "enquanto", 
+    "faca", 
+    "leia", 
+    "escreva",
+
+    "e",
+    "ou",
+    
+    "verdadeiro",
+    "falso",
+};
 
 typedef struct{
   TAtomo atomo;
@@ -31,12 +151,8 @@ TInfoAtomo obter_atomo();
 TInfoAtomo reconhece_numero();
 TInfoAtomo reconhece_id();
 
-// ###########
-// variaveis globais e funcoes DO ANALISADOR SINTATICO
-char strAtomo[][30] = { "Erro lexico", "IDENTIFICADOR","NUMERO","Op de Soma","Op Multiplicao","Fim Analise Sintatica"};
-
 TInfoAtomo InfoAtomo;
-TAtomo lookahead;// lookahead = obter_atomo()
+TAtomo atual;// lookahead = obter_atomo()
 
 // E ::= numero | identificador | +EE | *EE
 void E(); // prototipacao de funcao
@@ -45,7 +161,7 @@ int main(){
     printf("Analisando: %s\n",buffer);
     //    lookahead = *buffer++;
     InfoAtomo = obter_atomo();
-    lookahead = InfoAtomo.atomo;
+    atual = InfoAtomo.atomo;
 
     E(); // chama o simbolo inicial da gramatica
     consome(EOS);
@@ -160,6 +276,9 @@ q1:
     //https://www.tutorialspoint.com/c_standard_library/c_function_strncpy.htm
     strncpy(infoAtomo.atributo_ID,pIniID,buffer-pIniID);
     infoAtomo.atributo_ID[buffer-pIniID] = '\x0';
+
+    // Faz a comparação com as strings reservadas. 
+    // Se for igual a alguma delas, retorna o atomo correspondente
     infoAtomo.atomo  = IDENTIFICADOR;
     return infoAtomo;
 }
@@ -167,21 +286,21 @@ q1:
 // ANALISADOR SINTATICO
 //###############################
 void consome( TAtomo atomo ){
-    if( lookahead == atomo ){
+    if( atual == atomo ){
         //    lookahead = *buffer++;
         InfoAtomo = obter_atomo();
-        lookahead = InfoAtomo.atomo;
+        atual = InfoAtomo.atomo;
     }
     else{
         //printf("erro sintatico: esperado [%c] encontrado [%c]\n",atomo,lookahead);
-        printf("#%03d: Erro sintatico: esperado [%s] encontrado [%s]\n", InfoAtomo.linha,strAtomo[atomo],strAtomo[lookahead]);
+        printf("#%03d: Erro sintatico: esperado [%s] encontrado [%s]\n", InfoAtomo.linha,funcoes_sintatico[atomo],funcoes_sintatico[atual]);
         exit(1);
     }
 }
 
 // E ::= numero | identificador | +EE | *EE
 void E(){
-    switch( lookahead ){
+    switch( atual ){
         case OP_SOMA:
             consome(OP_SOMA);
             E();E();

@@ -72,7 +72,8 @@
         "numeric": "cpp",
         "random": "cpp",
         "numbers": "cpp",
-        "ranges": "cpp"
+        "ranges": "cpp",
+        "ctype.h": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }
