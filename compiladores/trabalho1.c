@@ -18,6 +18,7 @@ typedef enum{
     INICIO, 
     FIM,
 
+    SE,
     ENTAO, 
     SENAO, 
 
@@ -53,6 +54,7 @@ typedef enum{
     MULTIPLICA,
     SUBTRAI,
 
+    COMENTARIO,
     IDENTIFICADOR,
     ERRO,
     EOS
@@ -70,6 +72,7 @@ char funcoes_sintatico[][30] = {
     "INICIO", 
     "FIM",
 
+    "SE",
     "ENTAO", 
     "SENAO", 
 
@@ -105,6 +108,7 @@ char funcoes_sintatico[][30] = {
     "MULTIPLICA",
     "SUBTRAI",
 
+    "COMENTARIO",
     "IDENTIFICADOR",
     "ERRO",
     "EOS"
@@ -122,6 +126,7 @@ char palavras_reservadas[][30] = {
     "inicio", 
     "fim",
 
+    "se",
     "entao", 
     "senao", 
 
@@ -146,18 +151,18 @@ typedef struct{
 
 // #######################
 // variavel global e funcoes DECLARADA NO ANALISADOR LEXICO
-char *buffer ="+ +       1.0012 22121.0 var";
+char *buffer = "/*\nprograma le dois numeros\ninteiros e encontra o maior\n*/\nalgoritmo exemplo2;\nvariavel maior,n1,n2:inteiro;\ninicio\nleia(n1);\nleia(n2);\nse( n1 > n2 ) entao\nmaior := n1\nsenao\nmaior := n2;\nescreva(maior) // imprime o maior valor\nfim.";
+
 int contaLinha=1;
 
 TInfoAtomo obter_atomo();
 TInfoAtomo reconhece_numero();
 TInfoAtomo reconhece_id();
+TInfoAtomo reconhece_comentario();
 
 TInfoAtomo InfoAtomo;
 TAtomo atual;// lookahead = obter_atomo()
 
-// E ::= numero | identificador | +EE | *EE
-void E(); // prototipacao de funcao
 /*
 <programa>::= algoritmo identificador “;” <bloco> “
 .
@@ -211,12 +216,12 @@ void fator();
 
 void consome( TAtomo atomo );
 int main(){
-    printf("Analisando: %s\n",buffer);
+    //printf("Analisando: %s\n",buffer);
     
     InfoAtomo = obter_atomo();
     atual = InfoAtomo.atomo;
 
-    E(); // chama o simbolo inicial da gramatica
+    programa(); // chama o simbolo inicial da gramatica
     consome(EOS);
 
     printf("fim de programa.");
@@ -278,6 +283,10 @@ TInfoAtomo obter_atomo(){
     else if(*buffer == '-'){
         infoAtomo.atomo = SUBTRAI;
         buffer++;
+    }
+    else if(*buffer == '/'){
+        infoAtomo.atomo = COMENTARIO;
+        reconhece_comentario();
     }
     else if(*buffer == '\x0')
         infoAtomo.atomo = EOS;
@@ -366,7 +375,7 @@ q1:
     // Se for igual a alguma delas, retorna o atomo correspondente
     for(int i=0;i<sizeof(palavras_reservadas)/sizeof(palavras_reservadas[0]);i++){
         if(strcmp(infoAtomo.atributo_ID,palavras_reservadas[i])==0){
-            infoAtomo.atomo = i;
+            infoAtomo.atomo = TAtomo(i);
             return infoAtomo;
         }
     }
@@ -375,12 +384,67 @@ q1:
     return infoAtomo;
 }
 
+TInfoAtomo reconhece_comentario(){
+    TInfoAtomo infoAtomo;
+
+q0:
+    if(*buffer != '/'){
+        buffer++;
+        goto q0;
+    }
+    if(*buffer == '/'){
+        buffer++;
+        goto q1;
+    }
+    if (*buffer == '*'){
+        buffer++;
+        goto q2;
+    }
+
+q1:
+    if(*buffer == '/'){
+        buffer++;
+        goto q1;
+    }
+    if (*buffer == '*'){
+        goto q2;
+    }
+    if (*buffer != '/' && *buffer != '*'){
+        buffer++;
+        return infoAtomo;
+    }
+
+q2:
+    if(*buffer != '*'){
+        if (*buffer == '\n'){
+            contaLinha++;
+        }
+        buffer++;
+        goto q2;
+    }
+    if(*buffer == '*'){
+        buffer++;
+        goto q3;
+    }
+
+q3: 
+    if(*buffer != '/'){
+        goto q2;
+    }
+    if(*buffer == '/'){
+        buffer++;
+    }
+
+    infoAtomo.atomo = COMENTARIO;
+    return infoAtomo;
+}
+
 //###############################
 // ANALISADOR SINTATICO
 //###############################
 void consome( TAtomo atomo ){
     if( atual == atomo ){
-        //    lookahead = *buffer++;
+        printf("#  %d: consome: %s\n", contaLinha, funcoes_sintatico[atual]);
         InfoAtomo = obter_atomo();
         atual = InfoAtomo.atomo;
     }
@@ -391,27 +455,183 @@ void consome( TAtomo atomo ){
     }
 }
 
-// E ::= numero | identificador | +EE | *EE
-void E(){
-    switch( atual ){
-        case OP_SOMA:
-            consome(OP_SOMA);
-            E();E();
-            break;
-        case OP_MULT:
-            //consome *
-            consome(OP_MULT);
-            E();E();
-            break;
-        case IDENTIFICADOR:
-            consome(IDENTIFICADOR);
-            break;
-        default:
-            consome(NUMERO);
-    }
-
-
+void programa(){
+    consome(ALGORITMO);
+    consome(IDENTIFICADOR);
+    consome(PONTO_VIRGULA);
+    bloco();
+    consome(PONTO);
+    consome(EOS);
 }
 
+void bloco(){
+    if(atual == VARIAVEL){
+        declaracao_de_variaveis();
+    }
+    comando_composto();
+}
 
+void declaracao_de_variaveis(){
+    consome(VARIAVEL);
+    lista_variavel();
+    consome(DOIS_PONTOS);
+    tipo();
+    consome(PONTO_VIRGULA);
+    while(atual == IDENTIFICADOR){
+        lista_variavel();
+        consome(DOIS_PONTOS);
+        tipo();
+        consome(PONTO_VIRGULA);
+    }
+}
+
+void lista_variavel(){
+    consome(IDENTIFICADOR);
+    while(atual == VIRGULA){
+        consome(VIRGULA);
+        consome(IDENTIFICADOR);
+    }
+}
+
+void tipo(){
+    if(atual == INTEIRO)
+        consome(INTEIRO);
+    else
+        consome(LOGICO);
+}
+
+void comando_composto(){
+    consome(INICIO);
+    comando();
+    while(atual == PONTO_VIRGULA){
+        consome(PONTO_VIRGULA);
+        comando();
+    }
+    consome(FIM);
+}
+
+void comando(){
+    if(atual == IDENTIFICADOR){
+        comando_atribuicao();
+    }
+    else if(atual == SE){
+        comando_se();
+    }
+    else if(atual == ENQUANTO){
+        comando_enquanto();
+    }
+    else if(atual == LEIA){
+        comando_entrada();
+    }
+    else if(atual == ESCREVA){
+        comando_saida();
+    }
+    else{
+        comando_composto();
+    }
+}
+
+void comando_atribuicao(){
+    consome(IDENTIFICADOR);
+    consome(ATRIBUICAO);
+    expressao();
+}
+
+void comando_se(){
+    consome(SE);
+    consome(ABRE_PARENTESES);
+    expressao();
+    consome(FECHA_PARENTESES);
+    consome(ENTAO);
+    comando();
+    if(atual == SENAO){
+        consome(SENAO);
+        comando();
+    }
+}
+
+void comando_enquanto(){
+    consome(ENQUANTO);
+    consome(ABRE_PARENTESES);
+    expressao();
+    consome(FECHA_PARENTESES);
+    consome(FACA);
+    comando();
+}
+
+void comando_entrada(){
+    consome(LEIA);
+    consome(ABRE_PARENTESES);
+    lista_variavel();
+    consome(FECHA_PARENTESES);
+}
+
+void comando_saida(){
+    consome(ESCREVA);
+    consome(ABRE_PARENTESES);
+    expressao();
+    while(atual == VIRGULA){
+        consome(VIRGULA);
+        expressao();
+    }
+    consome(FECHA_PARENTESES);
+}
+
+void expressao(){
+    expressao_simples();
+    if(atual == MENOR_QUE || atual == MAIOR_QUE || atual == MENOR_IGUAL || atual == MAIOR_IGUAL || atual == IGUAL || atual == DIFERENTE){
+        relacional();
+        expressao_simples();
+    }
+}
+
+void relacional(){
+    if(atual == MENOR_QUE)
+        consome(MENOR_QUE);
+    else if(atual == MAIOR_QUE)
+        consome(MAIOR_QUE);
+    else if(atual == MENOR_IGUAL)
+        consome(MENOR_IGUAL);
+    else if(atual == MAIOR_IGUAL)
+        consome(MAIOR_IGUAL);
+    else if(atual == IGUAL)
+        consome(IGUAL);
+    else
+        consome(DIFERENTE);
+}
+
+void expressao_simples(){
+    if(atual == SOMA || atual == SUBTRAI){
+        consome(atual);
+    }
+    termo();
+    while(atual == SOMA || atual == SUBTRAI || atual == OU){
+        consome(atual);
+        termo();
+    }
+}
+
+void termo(){
+    fator();
+    while(atual == MULTIPLICA || atual == DIVIDE || atual == E){
+        consome(atual);
+        fator();
+    }
+}
+
+void fator(){
+    if(atual == IDENTIFICADOR)
+        consome(IDENTIFICADOR);
+    else if(atual == NUMERO)
+        consome(NUMERO);
+    else if(atual == VERDADEIRO)
+        consome(VERDADEIRO);
+    else if(atual == FALSO)
+        consome(FALSO);
+    else{
+        consome(ABRE_PARENTESES);
+        expressao();
+        consome(FECHA_PARENTESES);
+    }
+}
 
