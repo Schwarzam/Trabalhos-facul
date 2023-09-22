@@ -55,6 +55,7 @@ typedef enum{
     SUBTRAI,
 
     COMENTARIO,
+    COMENTARIO_LONGO,
     IDENTIFICADOR,
     ERRO,
     EOS
@@ -109,6 +110,7 @@ char funcoes_sintatico[][30] = {
     "SUBTRAI",
 
     "COMENTARIO",
+    "COMENTARIO_LONGO",
     "IDENTIFICADOR",
     "ERRO",
     "EOS"
@@ -151,7 +153,7 @@ typedef struct{
 
 // #######################
 // variavel global e funcoes DECLARADA NO ANALISADOR LEXICO
-char *buffer = "/*\nprograma le dois numeros\ninteiros e encontra o maior\n*/\nalgoritmo exemplo2;\nvariavel maior,n1,n2:inteiro;\ninicio\nleia(n1);\nleia(n2);\nse( n1 > n2 ) entao\nmaior := n1\nsenao\nmaior := n2;\nescreva(maior) // imprime o maior valor\nfim.";
+char *buffer = "/*\nprograma le dois numeros\ninteiros e encontra o maior\n*/\nalgoritmo exemplo2;\nvariavel maior,n1,n2:inteiro;\ninicio\nleia(n1);\nleia(n2);\nse( n1 > n2 ) entao\nmaior := n1\nsenao\nmaior := n2;\n\nescreva(maior) // imprime o maior valor\nfim.";
 
 int contaLinha=1;
 
@@ -159,6 +161,9 @@ TInfoAtomo obter_atomo();
 TInfoAtomo reconhece_numero();
 TInfoAtomo reconhece_id();
 TInfoAtomo reconhece_comentario();
+TInfoAtomo reconhece_menor();
+TInfoAtomo reconhece_maior();
+TInfoAtomo reconhece_atribuicao();
 
 TInfoAtomo InfoAtomo;
 TAtomo atual;// lookahead = obter_atomo()
@@ -222,9 +227,9 @@ int main(){
     atual = InfoAtomo.atomo;
 
     programa(); // chama o simbolo inicial da gramatica
-    consome(EOS);
+    //consome(EOS);
 
-    printf("fim de programa.");
+    printf("%d linhas analisadas. programa sintaticamente correto.\n", contaLinha);
 
     return 0;
 }
@@ -261,8 +266,7 @@ TInfoAtomo obter_atomo(){
         buffer++;
     }
     else if(*buffer == ':'){
-        infoAtomo.atomo = DOIS_PONTOS;
-        buffer++;
+        infoAtomo = reconhece_atribuicao();
     }
     else if(*buffer == '.'){
         infoAtomo.atomo = PONTO;
@@ -285,15 +289,27 @@ TInfoAtomo obter_atomo(){
         buffer++;
     }
     else if(*buffer == '/'){
-        infoAtomo.atomo = COMENTARIO;
-        reconhece_comentario();
+        infoAtomo = reconhece_comentario();
+    }
+    else if(*buffer == '<'){
+        infoAtomo = reconhece_menor();
+    }
+    else if(*buffer == '>'){
+        infoAtomo = reconhece_maior();
+    }
+    else if(*buffer == '='){
+        infoAtomo.atomo = IGUAL;
+    }
+    else if(*buffer == '#'){
+        infoAtomo.atomo = DIFERENTE;
     }
     else if(*buffer == '\x0')
         infoAtomo.atomo = EOS;
     else
         infoAtomo.atomo = ERRO;
 
-    infoAtomo.linha = contaLinha;
+    if (infoAtomo.atomo != COMENTARIO_LONGO)
+        infoAtomo.linha = contaLinha;
     return infoAtomo;
 }
 // funcao reconhe o atomo NUMERO
@@ -357,6 +373,9 @@ TInfoAtomo reconhece_id(){
     }
     return infoAtomo;
 q1:
+    if (*buffer == '.'){
+        goto q2;
+    }
     if(isalpha(*buffer)||isdigit(*buffer)){
         buffer++;
         goto q1;
@@ -364,6 +383,7 @@ q1:
     if(isupper(*buffer))
         return infoAtomo;
 
+q2:
     //Checar se tem mais de 15 caracteres
     if(buffer-pIniID > 15)
         return infoAtomo;
@@ -388,25 +408,25 @@ TInfoAtomo reconhece_comentario(){
     TInfoAtomo infoAtomo;
 
 q0:
-    if(*buffer != '/'){
-        buffer++;
-        goto q0;
-    }
     if(*buffer == '/'){
         buffer++;
         goto q1;
-    }
-    if (*buffer == '*'){
-        buffer++;
-        goto q2;
     }
 
 q1:
     if(*buffer == '/'){
+        while (*buffer != '\n'){
+            buffer++;
+        }
+        contaLinha++;
         buffer++;
-        goto q1;
+        infoAtomo.atomo = COMENTARIO;
+        return infoAtomo;
+        
     }
     if (*buffer == '*'){
+        infoAtomo.atomo = COMENTARIO_LONGO;
+        infoAtomo.linha = contaLinha;
         goto q2;
     }
     if (*buffer != '/' && *buffer != '*'){
@@ -435,7 +455,42 @@ q3:
         buffer++;
     }
 
-    infoAtomo.atomo = COMENTARIO;
+    return infoAtomo;
+}
+
+TInfoAtomo reconhece_menor(){
+    TInfoAtomo infoAtomo;
+    infoAtomo.atomo = MENOR_QUE;
+    buffer++;
+    if(*buffer == '='){
+        infoAtomo.atomo = MENOR_IGUAL;
+        buffer++;
+    }
+    return infoAtomo;
+}
+
+TInfoAtomo reconhece_maior(){
+    TInfoAtomo infoAtomo;
+    infoAtomo.atomo = MAIOR_QUE;
+    buffer++;
+    if(*buffer == '='){
+        infoAtomo.atomo = MAIOR_IGUAL;
+        buffer++;
+    }
+    return infoAtomo;
+}
+
+TInfoAtomo reconhece_atribuicao(){
+    TInfoAtomo infoAtomo;
+    infoAtomo.atomo = ERRO;
+    if(*buffer == ':'){
+        infoAtomo.atomo = DOIS_PONTOS;
+        buffer++;
+    }
+    if(*buffer == '='){
+        infoAtomo.atomo = ATRIBUICAO;
+        buffer++;
+    }
     return infoAtomo;
 }
 
@@ -443,14 +498,25 @@ q3:
 // ANALISADOR SINTATICO
 //###############################
 void consome( TAtomo atomo ){
+    if (atual == COMENTARIO || atual == COMENTARIO_LONGO){
+        printf("#  %03d: %s\n", InfoAtomo.linha, funcoes_sintatico[atual]);
+
+        InfoAtomo = obter_atomo();
+        atual = InfoAtomo.atomo;
+    }
     if( atual == atomo ){
-        printf("#  %d: consome: %s\n", contaLinha, funcoes_sintatico[atual]);
+        if (atual == IDENTIFICADOR){
+            printf("#  %03d: %s - atributo: %s\n", InfoAtomo.linha, funcoes_sintatico[atual], InfoAtomo.atributo_ID);
+        }else
+            printf("#  %03d: %s\n", InfoAtomo.linha, funcoes_sintatico[atual]);
+        
+        
         InfoAtomo = obter_atomo();
         atual = InfoAtomo.atomo;
     }
     else{
         //printf("erro sintatico: esperado [%c] encontrado [%c]\n",atomo,lookahead);
-        printf("#%03d: Erro sintatico: esperado [%s] encontrado [%s]\n", InfoAtomo.linha,funcoes_sintatico[atomo],funcoes_sintatico[atual]);
+        printf("#  %03d: Erro sintatico: esperado [%s] encontrado [%s]\n", InfoAtomo.linha, funcoes_sintatico[atomo], funcoes_sintatico[atual]);
         exit(1);
     }
 }
