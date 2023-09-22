@@ -395,7 +395,8 @@ q2:
     // Se for igual a alguma delas, retorna o atomo correspondente
     for(int i=0;i<sizeof(palavras_reservadas)/sizeof(palavras_reservadas[0]);i++){
         if(strcmp(infoAtomo.atributo_ID,palavras_reservadas[i])==0){
-            infoAtomo.atomo = TAtomo(i);
+            //infoAtomo.atomo = TAtomo(i); //esse daqui funciona no g++
+            infoAtomo.atomo = i; //esse daqui funciona no gcc
             return infoAtomo;
         }
     }
