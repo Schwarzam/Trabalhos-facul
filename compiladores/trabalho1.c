@@ -153,7 +153,7 @@ typedef struct{
 
 // #######################
 // variavel global e funcoes DECLARADA NO ANALISADOR LEXICO
-char *buffer = "/*\nprograma le dois numeros\ninteiros e encontra o maior\n*/\nalgoritmo exemplo2;\nvariavel maior,n1,n2:inteiro;\ninicio\nleia(n1);\nleia(n2);\nse( n1 > n2 ) entao\nmaior := n1\nsenao\nmaior := n2;\n\nescreva(maior) // imprime o maior valor\nfim.";
+char *buffer;
 
 int contaLinha=1;
 
@@ -220,9 +220,31 @@ void fator();
 
 
 void consome( TAtomo atomo );
-int main(){
+int main(int argc, char *argv[]){
     //printf("Analisando: %s\n",buffer);
     
+    //Ler arquivo e jogar no buffer
+    FILE *arq;
+    // O nome do arquivo pode vir da execucao do programa
+    if(argc > 1)
+        arq = fopen(argv[1], "r");
+    else
+        arq = fopen("input.txt", "r");
+
+    if(arq == NULL){
+        printf("Erro, nao foi possivel abrir o arquivo\n");
+        return 1;
+    }
+    else{
+        fseek(arq, 0, SEEK_END); // vai para o final do arquivo
+        int size = ftell(arq); // pegar tamanho do arquivo
+        fseek(arq, 0, SEEK_SET); // vai para o inicio do arquivo
+        buffer = malloc(size + 1); // aloca memoria para o buffer
+        fread(buffer, size, 1, arq); // le arquivo todo
+        fclose(arq); 
+        buffer[size] = '\0'; 
+    }
+
     InfoAtomo = obter_atomo();
     atual = InfoAtomo.atomo;
 
