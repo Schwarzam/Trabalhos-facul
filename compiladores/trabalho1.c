@@ -1,4 +1,7 @@
 /*
+Gustavo Schwarz 32141157
+Paulo Henrique 32138121
+
 Integra��o do analisador l�xico e analisador sint�tico
 */
 #include <stdio.h>
