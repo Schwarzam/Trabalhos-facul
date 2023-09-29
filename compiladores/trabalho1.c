@@ -228,8 +228,14 @@ int main(int argc, char *argv[]){
     // O nome do arquivo pode vir da execucao do programa
     if(argc > 1)
         arq = fopen(argv[1], "r");
-    else
-        arq = fopen("input.txt", "r");
+    else{
+        char arquivo[100];
+        printf("Insira o nome do arquivo: ");
+        scanf("%s", arquivo);
+        arq = fopen(arquivo, "r");
+    }
+
+        
 
     if(arq == NULL){
         printf("Erro, nao foi possivel abrir o arquivo\n");
