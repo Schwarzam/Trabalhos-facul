@@ -9,6 +9,8 @@ if not os.path.exists('/app/logs'):
     os.makedirs('/app/logs')
 
 logging.basicConfig(filename='/app/logs/app.log', level=logging.INFO, format='%(asctime)s - %(message)s')
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 
 app = Flask(__name__)
 
@@ -51,8 +53,9 @@ def reduce_pdf():
 
 @app.route('/', methods=['GET'])
 def index():
+    logging.info(f"/ - IP {request.remote_addr}")
     return render_template('index.html')
     
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000)
     

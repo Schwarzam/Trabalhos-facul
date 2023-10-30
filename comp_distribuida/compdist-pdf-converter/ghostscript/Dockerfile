@@ -20,4 +20,4 @@ CMD ["python3", "flaskapp.py"]
 # sudo docker build -t gs .
 
 # Run on port 5001
-# sudo docker run -p 5001:5000 gs 
+# docker run -p 5001:5000 -v ${PWD}/logs:/app/logs gs
