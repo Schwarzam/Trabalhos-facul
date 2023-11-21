@@ -10,28 +10,28 @@ Integra��o do analisador l�xico e analisador sint�tico
 #include <ctype.h>
 // ########### TIPOS DOS ANALISADOR LEXICO E SINTATICO
 typedef enum{
-    ALGORITMO, 
+    ALGORITMO,
     NUMERO,
     DIVIDE,
 
     VARIAVEL,
-    INTEIRO, 
-    LOGICO, 
+    INTEIRO,
+    LOGICO,
 
-    INICIO, 
+    INICIO,
     FIM,
 
     SE,
-    ENTAO, 
-    SENAO, 
+    ENTAO,
+    SENAO,
 
-    ENQUANTO, 
-    FACA, 
-    
-    LEIA, 
+    ENQUANTO,
+    FACA,
+
+    LEIA,
     ESCREVA,
 
-    E, 
+    E,
     OU,
 
     VERDADEIRO,
@@ -44,9 +44,9 @@ typedef enum{
     IGUAL,
     DIFERENTE,
 
-    PONTO_VIRGULA, 
+    PONTO_VIRGULA,
     DOIS_PONTOS,
-    PONTO, 
+    PONTO,
     VIRGULA,
     ATRIBUICAO,
 
@@ -64,44 +64,44 @@ typedef enum{
     EOS
 }TAtomo;
 
-char funcoes_sintatico[][30] = { 
-    "ALGORITMO", 
+char funcoes_sintatico[][30] = {
+    "ALGORITMO",
     "NUMERO",
     "DIVIDE",
 
     "VARIAVEL",
-    "INTEIRO", 
-    "LOGICO", 
+    "INTEIRO",
+    "LOGICO",
 
-    "INICIO", 
+    "INICIO",
     "FIM",
 
     "SE",
-    "ENTAO", 
-    "SENAO", 
+    "ENTAO",
+    "SENAO",
 
-    "ENQUANTO", 
-    "FACA", 
-    
-    "LEIA", 
+    "ENQUANTO",
+    "FACA",
+
+    "LEIA",
     "ESCREVA",
 
-    "E", 
+    "E",
     "OU",
 
     "VERDADEIRO",
     "FALSO",
 
-    "MENOR_QUE",
-    "MAIOR_QUE",
-    "CMEG",
-    "MAIOR_IGUAL",
-    "IGUAL",
+    "CMME", //MENOR QUE
+    "CMMA", //MAIOR QUE 
+    "CMEG", //MENOR IGUAL
+    "CMAG", //MAIOR IGUAL
+    "CMIG", //COMPARA IGUAL = 
     "DIFERENTE",
 
-    "PONTO_VIRGULA", 
+    "PONTO_VIRGULA",
     "DOIS_PONTOS",
-    "PONTO", 
+    "PONTO",
     "VIRGULA",
     "ATRIBUICAO",
 
@@ -109,8 +109,8 @@ char funcoes_sintatico[][30] = {
     "FECHA_PARENTESES",
 
     "SOMA",
-    "MULTIPLICA",
-    "SUBTRAI",
+    "MULT",
+    "SUBT",
 
     "COMENTARIO",
     "COMENTARIO_LONGO",
@@ -119,8 +119,8 @@ char funcoes_sintatico[][30] = {
     "EOS"
 };
 
-char palavras_reservadas[][30] = { 
-    "algoritmo", 
+char palavras_reservadas[][30] = {
+    "algoritmo",
     "numero",
     "div",
 
@@ -128,21 +128,21 @@ char palavras_reservadas[][30] = {
     "inteiro",
     "logico",
 
-    "inicio", 
+    "inicio",
     "fim",
 
     "se",
-    "entao", 
-    "senao", 
+    "entao",
+    "senao",
 
-    "enquanto", 
-    "faca", 
-    "leia", 
+    "enquanto",
+    "faca",
+    "leia",
     "escreva",
 
     "e",
     "ou",
-    
+
     "verdadeiro",
     "falso",
 };
@@ -263,7 +263,7 @@ int proximo_rotulo();
 void consome( TAtomo atomo );
 int main(int argc, char *argv[]){
     //printf("Analisando: %s\n",buffer);
-    
+
     //Ler arquivo e jogar no buffer
     FILE *arq;
     // O nome do arquivo pode vir da execucao do programa
@@ -271,12 +271,12 @@ int main(int argc, char *argv[]){
         arq = fopen(argv[1], "r");
     else{
         char arquivo[100];
-        printf("Insira o nome do arquivo: ");
-        scanf("%s", arquivo);
-        arq = fopen(arquivo, "r");
+        //printf("Insira o nome do arquivo: ");
+        //scanf("%s", arquivo);
+        arq = fopen("C:/Users/gusta/Documents/Repositorios/Trabalhos-facul/compiladores/n2/input.txt", "r");
     }
 
-        
+
 
     if(arq == NULL){
         printf("Erro, nao foi possivel abrir o arquivo\n");
@@ -288,8 +288,8 @@ int main(int argc, char *argv[]){
         fseek(arq, 0, SEEK_SET); // vai para o inicio do arquivo
         buffer = malloc(size + 1); // aloca memoria para o buffer
         fread(buffer, size, 1, arq); // le arquivo todo
-        fclose(arq); 
-        buffer[size] = '\0'; 
+        fclose(arq);
+        buffer[size] = '\0';
     }
 
     InfoAtomo = obter_atomo();
@@ -405,7 +405,7 @@ q1:
         goto q3;
     }
 
-q2: 
+q2:
     if (*buffer == '+' || *buffer == '-'){
         buffer++;
     }
@@ -415,7 +415,7 @@ q2:
     }
     return infoAtomo;
 
-q3: 
+q3:
     if (isdigit(*buffer)){
         buffer++;
         goto q3;
@@ -469,7 +469,7 @@ q2:
             return infoAtomo;
         }
     }
-    
+
     infoAtomo.atomo  = IDENTIFICADOR;
     return infoAtomo;
 }
@@ -492,7 +492,7 @@ q1:
         buffer++;
         infoAtomo.atomo = COMENTARIO;
         return infoAtomo;
-        
+
     }
     if (*buffer == '*'){
         infoAtomo.atomo = COMENTARIO_LONGO;
@@ -517,7 +517,7 @@ q2:
         goto q3;
     }
 
-q3: 
+q3:
     if(*buffer != '/'){
         goto q2;
     }
@@ -576,13 +576,13 @@ void consome( TAtomo atomo ){
     }
     if( atual == atomo ){
         if (atual == IDENTIFICADOR){
-            // printf("#  %03d: %s - atributo: %s\n", InfoAtomo.linha, funcoes_sintatico[atual], InfoAtomo.atributo_ID);
+            //printf("#  %03d: %s - atributo: %s\n", InfoAtomo.linha, funcoes_sintatico[atual], InfoAtomo.atributo_ID);
         }else{
-            // printf("#  %03d: %s\n", InfoAtomo.linha, funcoes_sintatico[atual]);
+            //printf("#  %03d: %s\n", InfoAtomo.linha, funcoes_sintatico[atual]);
         }
-            
-        
-        
+
+
+
         InfoAtomo = obter_atomo();
         atual = InfoAtomo.atomo;
     }
@@ -600,7 +600,7 @@ void programa(){
     consome(PONTO_VIRGULA);
     bloco();
     consome(PONTO);
-    consome(EOS);
+    //consome(EOS);
     printf("\tPARA\n");
 }
 
@@ -613,7 +613,7 @@ void bloco(){
 
 void declaracao_de_variaveis(){
     consome(VARIAVEL);
-    
+
     lista_nova_variavel();
     consome(DOIS_PONTOS);
     tipo();
@@ -627,7 +627,7 @@ void declaracao_de_variaveis(){
 }
 
 void lista_nova_variavel(){
-    
+
     int count = 1;
     insereVariavel(InfoAtomo.atributo_ID, atual);
     consome(IDENTIFICADOR);
@@ -704,8 +704,8 @@ void comando_atribuicao(){
 
     if (isNumero)
         printf("\tARMZ %d\t # %s := %d\n", var.endereco, var.nome, num);
-    if (!isNumero)
-        printf("\tARMZ %d\t # %s := %s\n", var.endereco, var.nome, InfoAtomo.atributo_ID);
+    if (!isNumero){}
+        //printf("\tARMZ %d\t # %s := %s\n", var.endereco, var.nome, InfoAtomo.atributo_ID);
 }
 
 void comando_se(){
@@ -725,6 +725,7 @@ void comando_enquanto(){
     int L1 = proximo_rotulo();
     int L2 = proximo_rotulo();
 
+    
     consome(ENQUANTO);
     printf("L%d:\tNADA\n", L1);
     consome(ABRE_PARENTESES);
@@ -744,11 +745,14 @@ int proximo_rotulo(){
 
 void comando_entrada(){
     consome(LEIA);
+
     printf("\tLEIT\n");
     consome(ABRE_PARENTESES);
+
+    TInfoAtomo op = InfoAtomo;
     lista_variavel();
     consome(FECHA_PARENTESES);
-    printf("\tARMZ %d\t # leia(%s)\n", busca_tabela_variaveis(InfoAtomo.atributo_ID).endereco, busca_tabela_variaveis(InfoAtomo.atributo_ID).nome);
+    printf("\tARMZ %d\t # leia(%s)\n", busca_tabela_variaveis(op.atributo_ID).endereco, busca_tabela_variaveis(op.atributo_ID).nome);
 }
 
 void comando_saida(){
@@ -771,7 +775,7 @@ void comando_saida(){
 
 void expressao(){
     expressao_simples();
-    
+
     if(atual == MENOR_QUE || atual == MAIOR_QUE || atual == MENOR_IGUAL || atual == MAIOR_IGUAL || atual == IGUAL || atual == DIFERENTE){
         TAtomo op = atual;
         relacional();
@@ -811,8 +815,10 @@ void expressao_simples(){
 void termo(){
     fator();
     while(atual == MULTIPLICA || atual == DIVIDE || atual == E){
+        TAtomo op = atual;
         consome(atual);
         fator();
+        printf("\t%s\t \n", funcoes_sintatico[op]);
     }
 }
 
@@ -823,7 +829,7 @@ void fator(){
         consome(IDENTIFICADOR);
     }
     else if(atual == NUMERO){
-        printf("\tCRCT %d\n", InfoAtomo.atributo_numero); 
+        printf("\tCRCT %d\n", InfoAtomo.atributo_numero);
         consome(NUMERO);
     }
     else if(atual == VERDADEIRO)
