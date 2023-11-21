@@ -271,9 +271,9 @@ int main(int argc, char *argv[]){
         arq = fopen(argv[1], "r");
     else{
         char arquivo[100];
-        //printf("Insira o nome do arquivo: ");
-        //scanf("%s", arquivo);
-        arq = fopen("C:/Users/gusta/Documents/Repositorios/Trabalhos-facul/compiladores/n2/input.txt", "r");
+        printf("Insira o nome do arquivo: ");
+        scanf("%s", arquivo);
+        arq = fopen(arquivo, "r");
     }
 
 
