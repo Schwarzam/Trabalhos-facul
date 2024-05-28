@@ -92,18 +92,28 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    // Definição dos vértices do triângulo.
+    // Vértices do cubo
     GLfloat vertices[] = {
-        0.0f, 0.5f, 0.0f,
-        -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f
+        -0.5f, -0.5f, -0.5f, // Vértice 0
+        0.5f, -0.5f, -0.5f, // Vértice 1
+        0.5f,  0.5f, -0.5f, // Vértice 2
+        -0.5f,  0.5f, -0.5f, // Vértice 3
+        -0.5f, -0.5f,  0.5f, // Vértice 4
+        0.5f, -0.5f,  0.5f, // Vértice 5
+        0.5f,  0.5f,  0.5f, // Vértice 6
+        -0.5f,  0.5f,  0.5f  // Vértice 7
     };
 
-    // Definição das cores dos vértices do triângulo.
+    // Cores dos vértices
     GLfloat colors[] = {
-        1.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 1.0f,
+        1.0f, 0.0f, 0.0f, // Vermelho
+        0.0f, 1.0f, 0.0f, // Verde
+        0.0f, 0.0f, 1.0f, // Azul
+        1.0f, 1.0f, 0.0f, // Amarelo
+        1.0f, 0.0f, 1.0f, // Magenta
+        0.0f, 1.0f, 1.0f, // Ciano
+        0.5f, 0.5f, 0.5f, // Cinza
+        1.0f, 0.5f, 0.0f  // Laranja
     };
 
     // Criação e configuração do Vertex Array Object (VAO).
@@ -116,6 +126,21 @@ int main(int argc, char* argv[])
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    GLuint indices[] = {
+        0, 1, 2, 2, 3, 0, // Face traseira
+        4, 5, 6, 6, 7, 4, // Face frontal
+        4, 5, 1, 1, 0, 4, // Face inferior
+        3, 2, 6, 6, 7, 3, // Face superior
+        4, 0, 3, 3, 7, 4, // Face esquerda
+        1, 5, 6, 6, 2, 1  // Face direita
+    };
+
+    // Criação do Vertex Buffer Object (VBO) para índices
+    GLuint EBO;
+    glGenBuffers(1, &EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // Configuração do atributo de posição.
     // "layout(location = 0) in vec3 a_Pos;\n"
@@ -233,7 +258,7 @@ int main(int argc, char* argv[])
         glClear(GL_COLOR_BUFFER_BIT);
 
         // Renderização do triângulo.
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
         // Atualização da janela.
         SDL_GL_SwapWindow(window);
