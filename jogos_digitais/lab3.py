@@ -1,3 +1,5 @@
+# Gustavo Schwarz 10389588
+
 import pygame
 import random
 import math
@@ -11,8 +13,29 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Batalha Espacial")
 
 # Carregar imagem da nave
-nave_imagem = pygame.image.load("imagens/nave-espacial.png")  # Certifique-se de ter uma imagem chamada "nave.png"
-nave_imagem = pygame.transform.scale(nave_imagem, (50, 50))  # Redimensione a imagem se necessário
+nave_imagem = pygame.image.load("imagens/nave-espacial.png")
+nave_imagem = pygame.transform.scale(nave_imagem, (50, 50))
+
+# Classe do Tiro
+class Tiro:
+    def __init__(self, x, y, direcao):
+        self.x = x
+        self.y = y
+        self.direcao = direcao
+        self.velocidade = 10
+        self.raio = 5
+
+    def mover(self):
+        rad = math.radians(self.direcao)
+        self.x += self.velocidade * math.cos(rad)
+        self.y -= self.velocidade * math.sin(rad)
+
+    def desenhar(self, tela):
+        pygame.draw.circle(tela, (255, 255, 255), (int(self.x), int(self.y)), self.raio)
+
+    def colidiu(self, nave):
+        distancia = math.hypot(self.x - nave.x, self.y - nave.y)
+        return distancia < self.raio + 25  # 25 é metade do tamanho da nave (50/2)
 
 # Classe da Nave Espacial
 class Starship:
@@ -31,35 +54,26 @@ class Starship:
         rad = math.radians(self.direcao)
         self.x += self.velocidade * math.cos(rad)
         self.y -= self.velocidade * math.sin(rad)
-        print(f"{self.nome} moveu-se para a posição ({self.x}, {self.y}).")
 
     def girar(self, direcao):
         if direcao == 'esquerda':
             self.direcao = (self.direcao + 90) % 360
         elif direcao == 'direita':
             self.direcao = (self.direcao - 90) % 360
-        print(f"{self.nome} virou para {direcao}. Agora está apontando para {self.direcao} graus.")
 
-    def atirar(self, alvo):
+    def atirar(self):
         if self.energia >= 10:
             self.energia -= 10
-            dano = random.randint(1, 10)
-            alvo.receber_dano(dano)
-            print(f"{self.nome} disparou causando {dano} de dano. Energia restante: {self.energia}")
-        else:
-            print(f"{self.nome} não tem energia suficiente para atirar.")
+            rad = math.radians(self.direcao)
+            tiro_x = self.x + 25 * math.cos(rad)
+            tiro_y = self.y - 25 * math.sin(rad)
+            return Tiro(tiro_x, tiro_y, self.direcao)
+        return None
 
     def receber_dano(self, dano):
         self.escudo -= dano
         if self.escudo <= 0:
             self.viva = False
-            print(f"{self.nome} foi destruída!")
-        else:
-            print(f"{self.nome} foi atingida! Escudo restante: {self.escudo}")
-
-    def recarregar(self):
-        self.energia = 100
-        print(f"{self.nome} recarregou sua energia.")
 
     def desenhar(self, tela):
         rotacionada = pygame.transform.rotate(self.image, self.direcao)
@@ -70,6 +84,9 @@ def main():
     clock = pygame.time.Clock()
     nave1 = Starship("Vingador Estelar", 100, 300)
     nave2 = Starship("Predador Cósmico", 600, 300)
+
+    tiros_nave1 = []
+    tiros_nave2 = []
 
     # Variáveis para controlar a rotação
     key_left_pressed = False
@@ -103,7 +120,9 @@ def main():
             key_d_pressed = False
 
         if keys[pygame.K_SPACE]:
-            nave1.atirar(nave2)
+            tiro = nave1.atirar()
+            if tiro:
+                tiros_nave1.append(tiro)
 
         # Controles da nave 2
         if keys[pygame.K_UP]:
@@ -122,11 +141,30 @@ def main():
             key_right_pressed = False
 
         if keys[pygame.K_RETURN]:
-            nave2.atirar(nave1)
+            tiro = nave2.atirar()
+            if tiro:
+                tiros_nave2.append(tiro)
+
+        # Mover e desenhar os tiros
+        for tiro in tiros_nave1:
+            tiro.mover()
+            tiro.desenhar(screen)
+            if tiro.colidiu(nave2):
+                nave2.receber_dano(10)
+                tiros_nave1.remove(tiro)
+
+        for tiro in tiros_nave2:
+            tiro.mover()
+            tiro.desenhar(screen)
+            if tiro.colidiu(nave1):
+                nave1.receber_dano(10)
+                tiros_nave2.remove(tiro)
 
         # Desenhar naves
-        nave1.desenhar(screen)
-        nave2.desenhar(screen)
+        if nave1.viva:
+            nave1.desenhar(screen)
+        if nave2.viva:
+            nave2.desenhar(screen)
 
         pygame.display.flip()
         clock.tick(60)
